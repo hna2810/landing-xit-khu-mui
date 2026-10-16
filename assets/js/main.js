@@ -16,6 +16,7 @@ const CONFIG = {
   feedbackImages: (WP_DATA.feedbackImages && WP_DATA.feedbackImages.length) ? WP_DATA.feedbackImages : [],
   feedbackImages34: (WP_DATA.feedbackImages34 && WP_DATA.feedbackImages34.length) ? WP_DATA.feedbackImages34 : [],
   feedbackImages11: (WP_DATA.feedbackImages11 && WP_DATA.feedbackImages11.length) ? WP_DATA.feedbackImages11 : [],
+  seedingOrders: (WP_DATA.seedingOrders && WP_DATA.seedingOrders.length) ? WP_DATA.seedingOrders : [],
   certificateImages: (WP_DATA.certificateImages && WP_DATA.certificateImages.length) ? WP_DATA.certificateImages : [],
   commitments: [
     { icon: 'doc', title: 'Đã công bố mỹ phẩm', text: 'Số công bố 60/26/CBMP-NB.' },
@@ -719,3 +720,80 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+/* Seeding Live Orders Toast (Góc trái màn hình) */
+(() => {
+  const toast = document.getElementById('orderToast');
+  if (!toast) return;
+
+  const orders = (CONFIG.seedingOrders && CONFIG.seedingOrders.length) ? CONFIG.seedingOrders : [
+    { name: 'Chị Thu Trang', city: 'Hà Nội', pkg: 'Combo 2 chai 30ml', time: 'Vừa xong' },
+    { name: 'Anh Tuấn Anh', city: 'TP.HCM', pkg: 'Combo 2 chai 30ml', time: '1 phút trước' },
+    { name: 'Chị Mai Lan', city: 'Đà Nẵng', pkg: 'Combo 3 chai 30ml', time: '2 phút trước' },
+    { name: 'Anh Hoàng Long', city: 'Hải Phòng', pkg: '1 chai 30ml', time: '2 phút trước' },
+    { name: 'Chị Bích Ngọc', city: 'Bình Dương', pkg: 'Combo 2 chai 30ml', time: '3 phút trước' },
+    { name: 'Anh Quang Minh', city: 'Bắc Ninh', pkg: 'Combo 3 chai 30ml', time: '3 phút trước' },
+    { name: 'Chị Hồng Hạnh', city: 'Cần Thơ', pkg: 'Combo 2 chai 30ml', time: '4 phút trước' },
+    { name: 'Chị Thanh Thảo', city: 'Quảng Ninh', pkg: 'Combo 2 chai 30ml', time: '5 phút trước' },
+    { name: 'Anh Đức Huy', city: 'Đồng Nai', pkg: 'Combo 2 chai 30ml', time: '5 phút trước' }
+  ];
+
+  let currentIdx = 0;
+  let timerId = null;
+  let hideTimerId = null;
+  let isDismissed = false;
+
+  const buyerEl = document.getElementById('toastBuyer');
+  const pkgEl = document.getElementById('toastPackage');
+  const timeEl = document.getElementById('toastTime');
+  const closeBtn = document.getElementById('orderToastClose');
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      toast.classList.remove('show');
+      isDismissed = true;
+      clearTimeout(timerId);
+      clearTimeout(hideTimerId);
+      // Dismiss for 2 minutes
+      setTimeout(() => { isDismissed = false; scheduleNext(8000); }, 120000);
+    });
+  }
+
+  // Click on toast smoothly scrolls to order section
+  toast.addEventListener('click', () => {
+    const orderSec = document.getElementById('dat-hang');
+    if (orderSec) {
+      orderSec.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  const showToast = () => {
+    if (isDismissed) return;
+    const item = orders[currentIdx];
+    currentIdx = (currentIdx + 1) % orders.length;
+
+    if (buyerEl) buyerEl.textContent = `${item.name} (${item.city})`;
+    if (pkgEl) pkgEl.textContent = item.pkg;
+    if (timeEl) timeEl.textContent = item.time;
+
+    toast.style.display = 'flex';
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    hideTimerId = setTimeout(() => {
+      toast.classList.remove('show');
+      const nextDelay = 7000 + Math.floor(Math.random() * 5000);
+      scheduleNext(nextDelay);
+    }, 4500);
+  };
+
+  const scheduleNext = delay => {
+    clearTimeout(timerId);
+    timerId = setTimeout(showToast, delay);
+  };
+
+  // Start after 3.5 seconds
+  scheduleNext(3500);
+})();

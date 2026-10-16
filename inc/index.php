@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 $lx_modules = array(
     'helpers.php',
     'cleanup.php',
+    'reviews-data.php',
     'assets.php',
     'acf-options.php',
     'cf7.php',

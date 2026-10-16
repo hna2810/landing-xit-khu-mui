@@ -115,6 +115,10 @@ function lx_enqueue_scripts() {
         }
     }
 
+    if (empty($reviews) && function_exists('lx_get_seeding_reviews')) {
+        $reviews = lx_get_seeding_reviews();
+    }
+
     $feedback_34 = lx_get_field('lx_feedback_gallery_34', 'option', array());
     $feedback_urls_34 = array();
     if (!empty($feedback_34) && is_array($feedback_34)) {
@@ -221,6 +225,7 @@ function lx_enqueue_scripts() {
         'orderImage'        => lx_get_image_url('lx_order_image', ''),
         'videos'            => $videos,
         'reviews'           => $reviews,
+        'seedingOrders'     => function_exists('lx_get_seeding_orders') ? lx_get_seeding_orders() : array(),
         'feedbackImages'    => array_values($feedback_urls),
         'feedbackImages34'  => array_values($feedback_urls_34),
         'feedbackImages11'  => array_values($feedback_urls_11),
