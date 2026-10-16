@@ -13,6 +13,8 @@ $lx_modules = array(
     'helpers.php',
     'cleanup.php',
     'assets.php',
+    'acf-options.php',
+    'cf7.php',
 );
 
 foreach ($lx_modules as $file) {

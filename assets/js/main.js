@@ -1,65 +1,33 @@
 /* =========================================================
-   CẤU HÌNH – chỉ cần sửa ở đây
+   CẤU HÌNH – Tự động đồng bộ từ WordPress ACF (nếu có)
    ========================================================= */
+const WP_DATA = window.WP_CONFIG || {};
 const CONFIG = {
-  // true = hiện khung chờ ở các phần chưa có nội dung (để xem bố cục).
-  // Đổi thành false trước khi chạy quảng cáo: phần nào chưa có nội dung sẽ tự ẩn.
-  showPlaceholders: true,
-
-  // Ảnh sản phẩm: ảnh đầu tiên là ảnh chính ở đầu trang, các ảnh sau hiện thành ảnh nhỏ để chuyển.
-  productImages: [
-    // 'https://.../packshot.jpg',
-  ],
-  // Ảnh lifestyle mặc định cho phần "Công dụng" (để trống = dùng ảnh sản phẩm thứ 2 hoặc ảnh render)
-  usageImage: '',
-  // Ảnh cho từng nút vùng ở phần "Công dụng", theo thứ tự: Vùng nách, Vùng chân, Cơ thể, Vùng tiểu EVA
-  zoneImages: ['', '', '', ''],
-
-  // Ảnh 3:4 cho 4 thẻ nỗi lo, theo thứ tự: Hôi nách, Hôi chân, Mùi cơ thể, Bà đẻ sau sinh
-  problemImages: ['', '', '', ''],
-
-  // Ảnh minh hoạ trong khung tròn thành phần (ảnh vuông), theo thứ tự: Bạc hà, Trầu không, Gừng, Cam
-  ingredientImages: ['', '', '', ''],
-
-  // Ảnh minh hoạ cho 3 bước sử dụng (dọc 4:5), theo thứ tự: Lắc nhẹ, Xịt lên da, Để khô
-  stepImages: ['', '', ''],
-
-  // Ảnh sản phẩm cạnh form đặt hàng (ngang 16:10). Để trống = dùng ảnh sản phẩm đầu tiên hoặc ảnh render.
-  orderImage: '',
-
-  // Video review: YouTube (watch / shorts / youtu.be), TikTok (link có /video/123...), hoặc file .mp4
-  videos: [
-    // { url: 'https://www.tiktok.com/@ten/video/1234567890', title: 'Review sau 1 tuần dùng', author: '@ten_tiktok', poster: '' },
-  ],
-
-  // Đánh giá khách hàng THẬT. Điểm trung bình và biểu đồ sao được tính tự động từ danh sách này.
-  reviews: [
-    // { name: 'Chị Lan', location: 'Hà Nội', date: '12/10/2026', rating: 5, tag: 'Mẹ sau sinh',
-    //   content: 'Nội dung khách viết...', images: ['https://.../anh1.jpg'], avatar: '', verified: true },
-  ],
-
-  // Ảnh chụp tin nhắn / feedback khách gửi về
-  feedbackImages: [],
-
-  // Ảnh giấy công bố, chứng nhận, kiểm nghiệm
-  certificateImages: [],
-
-  // Cam kết hiển thị ở phần "Yên tâm khi chọn Mây Mây". icon: doc | leaf | truck | phone | shield | badge
+  showPlaceholders: WP_DATA.showPlaceholders !== undefined ? WP_DATA.showPlaceholders : true,
+  productImages: (WP_DATA.productImages && WP_DATA.productImages.length) ? WP_DATA.productImages : [],
+  usageImage: WP_DATA.usageImage || '',
+  zoneImages: (WP_DATA.zoneImages && WP_DATA.zoneImages.length) ? WP_DATA.zoneImages : ['', '', '', ''],
+  problemImages: (WP_DATA.problemImages && WP_DATA.problemImages.length) ? WP_DATA.problemImages : ['', '', '', ''],
+  ingredientImages: (WP_DATA.ingredientImages && WP_DATA.ingredientImages.length) ? WP_DATA.ingredientImages : ['', '', '', ''],
+  stepImages: (WP_DATA.stepImages && WP_DATA.stepImages.length) ? WP_DATA.stepImages : ['', '', ''],
+  orderImage: WP_DATA.orderImage || '',
+  videos: (WP_DATA.videos && WP_DATA.videos.length) ? WP_DATA.videos : [],
+  reviews: (WP_DATA.reviews && WP_DATA.reviews.length) ? WP_DATA.reviews : [],
+  feedbackImages: (WP_DATA.feedbackImages && WP_DATA.feedbackImages.length) ? WP_DATA.feedbackImages : [],
+  certificateImages: (WP_DATA.certificateImages && WP_DATA.certificateImages.length) ? WP_DATA.certificateImages : [],
   commitments: [
     { icon: 'doc', title: 'Đã công bố mỹ phẩm', text: 'Số công bố 60/26/CBMP-NB.' },
     { icon: 'leaf', title: 'Thảo mộc thuần chay', text: 'Bạc hà, trầu không, gừng và cam.' },
     { icon: 'truck', title: 'Freeship toàn quốc', text: 'Miễn phí vận chuyển trên toàn quốc.' },
     { icon: 'phone', title: 'Xác nhận trước khi giao', text: 'Mây Mây gọi điện xác nhận thông tin đơn hàng trước khi giao.' }
   ],
-
-  // Endpoint nhận đơn (Google Apps Script Web App, webhook...). Để trống = chỉ hiện thông báo thành công.
-  orderEndpoint: '',
-  price: 49000,
-  listPrice: 89000,
-  packages: [
-    { qty: 1, name: '1 chai 30ml' },
-    { qty: 2, name: '2 chai 30ml' },
-    { qty: 3, name: '3 chai 30ml' }
+  orderEndpoint: WP_DATA.orderEndpoint || 'https://script.google.com/macros/s/AKfycbx2mCi48FGEQtg9pjX_YuWUxFbQdxe2aj5iUHDDj4-4s9qLyykE6EZySZ1V6UnZydHJ-A/exec',
+  price: WP_DATA.price || 49000,
+  listPrice: WP_DATA.listPrice || 89000,
+  packages: (WP_DATA.packages && WP_DATA.packages.length) ? WP_DATA.packages : [
+    { qty: 1, name: '1 chai 30ml', price: 49000, oldPrice: 89000, tag: 'Tiết kiệm 45%' },
+    { qty: 2, name: 'Combo 2 chai 30ml', price: 89000, oldPrice: 178000, tag: 'Bán chạy nhất · Tiết kiệm 50%' },
+    { qty: 3, name: 'Combo 3 chai 30ml', price: 129000, oldPrice: 267000, tag: 'Tiết kiệm 52%' }
   ]
 };
 
@@ -348,9 +316,10 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   tick(); setInterval(tick, 1000);
 })();
 
-/* Packages */
+/* Packages fallback */
 (() => {
   const wrap = document.getElementById('packages');
+  if (!wrap) return;
   wrap.innerHTML = CONFIG.packages.map((p, i) => `
     <label class="pkg${i === 0 ? ' active' : ''}">
       <input type="radio" name="package" value="${p.qty}"${i === 0 ? ' checked' : ''}>
@@ -361,26 +330,112 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   const total = document.getElementById('total');
   wrap.addEventListener('change', e => {
     wrap.querySelectorAll('.pkg').forEach(o => o.classList.toggle('active', o.contains(e.target)));
-    total.textContent = fmt(+e.target.value * CONFIG.price);
+    if (total) total.textContent = fmt(+e.target.value * CONFIG.price);
   });
 })();
 
-/* Order form */
+/* Contact Form 7 Integration */
+(() => {
+  const updateCf7Package = () => {
+    const checked = document.querySelector('.packages-wrap input[name="package"]:checked');
+    if (checked) {
+      const val = checked.value || '';
+      const totalEl = document.getElementById('cf7Total');
+      if (totalEl) {
+        if (val.includes('89.000') || val.includes('Combo 2') || val.includes('2 chai')) {
+          totalEl.textContent = '89.000đ';
+        } else if (val.includes('129.000') || val.includes('Combo 3') || val.includes('3 chai')) {
+          totalEl.textContent = '129.000đ';
+        } else {
+          totalEl.textContent = '49.000đ';
+        }
+      }
+      document.querySelectorAll('.packages-wrap .wpcf7-list-item').forEach(item => {
+        item.classList.toggle('active', item.contains(checked));
+      });
+    }
+  };
+
+  document.addEventListener('change', e => {
+    if (e.target && e.target.name === 'package') {
+      updateCf7Package();
+    }
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateCf7Package);
+  } else {
+    updateCf7Package();
+  }
+
+  // Anti double-click for submit button
+  document.addEventListener('wpcf7submit', () => {
+    const btn = document.getElementById('submitBtn');
+    if (btn) {
+      btn.disabled = true;
+      setTimeout(() => { btn.disabled = false; }, 4000);
+    }
+  }, false);
+
+  // Success event handling
+  document.addEventListener('wpcf7mailsent', e => {
+    let name = '';
+    let phone = '';
+    if (e.detail && e.detail.inputs) {
+      e.detail.inputs.forEach(item => {
+        if (item.name === 'your-name' || item.name === 'name') name = item.value;
+        if (item.name === 'your-phone' || item.name === 'phone') phone = item.value;
+      });
+    }
+    if (!name) {
+      const el = document.getElementById('fName');
+      if (el) name = el.value;
+    }
+    if (!phone) {
+      const el = document.getElementById('fPhone');
+      if (el) phone = el.value;
+    }
+
+    const sName = document.getElementById('sName');
+    const sPhone = document.getElementById('sPhone');
+    if (sName && name) sName.textContent = name;
+    if (sPhone && phone) sPhone.textContent = phone;
+
+    const formContent = document.getElementById('formContent');
+    const success = document.getElementById('success');
+    if (formContent) formContent.style.display = 'none';
+    if (success) {
+      success.style.display = 'block';
+      success.classList.add('show');
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, false);
+})();
+
+/* Order form (Static fallback) */
 (() => {
   const form = document.getElementById('orderForm');
+  if (!form) return;
   const rules = {
     fName: v => v.trim().length >= 2,
     fPhone: v => /^0\d{9}$/.test(v.replace(/[\s.-]/g, '')),
     fAddress: v => v.trim().length >= 8
   };
   const check = id => {
-    const el = document.getElementById(id), ok = rules[id](el.value);
+    const el = document.getElementById(id);
+    if (!el || !rules[id]) return true;
+    const ok = rules[id](el.value);
     el.closest('.field').classList.toggle('invalid', !ok);
     return ok;
   };
-  Object.keys(rules).forEach(id => document.getElementById(id).addEventListener('input', () => {
-    if (document.getElementById(id).closest('.field').classList.contains('invalid')) check(id);
-  }));
+  Object.keys(rules).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', () => {
+        if (el.closest('.field').classList.contains('invalid')) check(id);
+      });
+    }
+  });
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -401,23 +456,32 @@ document.querySelectorAll('[data-ing]').forEach(el => {
       time: new Date().toISOString()
     };
     const btn = document.getElementById('submitBtn');
-    btn.disabled = true; btn.textContent = 'Đang gửi...';
+    if (btn) { btn.disabled = true; btn.textContent = 'Đang gửi...'; }
     if (CONFIG.orderEndpoint) {
       try {
         await fetch(CONFIG.orderEndpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
       } catch (err) { console.error('Gửi đơn thất bại', err); }
     }
-    // if (window.fbq) fbq('track', 'Purchase', { value: data.total, currency: 'VND' });
-    // if (window.ttq) ttq.track('PlaceAnOrder', { value: data.total, currency: 'VND' });
-    document.getElementById('sName').textContent = data.name;
-    document.getElementById('sPhone').textContent = data.phone;
-    document.getElementById('formContent').style.display = 'none';
-    document.getElementById('success').classList.add('show');
+    const sName = document.getElementById('sName');
+    const sPhone = document.getElementById('sPhone');
+    if (sName) sName.textContent = data.name;
+    if (sPhone) sPhone.textContent = data.phone;
+    const formContent = document.getElementById('formContent');
+    const success = document.getElementById('success');
+    if (formContent) formContent.style.display = 'none';
+    if (success) {
+      success.style.display = 'block';
+      success.classList.add('show');
+    }
   });
 })();
 
 /* FAQ */
 (() => {
+  if (document.getElementById('faqList')) {
+    // Already rendered by PHP / ACF with <details><summary>
+    return;
+  }
   const faqs = [
     ['Xịt khử mùi Mây Mây dùng được cho những vùng nào?', 'Sản phẩm dùng để chăm sóc mùi vùng nách, vùng chân và cơ thể; đồng thời có thể xịt khử mùi vùng tiểu EVA sau sinh. Không xịt vào mắt, niêm mạc hoặc vùng da tổn thương.'],
     ['Sau khi xịt bao lâu thì khô?', 'Sản phẩm khô thoáng khoảng 30 giây. Bạn chỉ cần để da khô tự nhiên rồi mặc quần áo.'],
@@ -428,6 +492,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     ['Đặt hàng xong thì sao?', 'Sau khi bạn điền form, Mây Mây sẽ liên hệ qua số điện thoại để xác nhận đơn. Vui lòng kiểm tra kỹ họ tên, số điện thoại và địa chỉ nhận hàng trước khi xác nhận.']
   ];
   const list = document.getElementById('faq');
+  if (!list) return;
   list.innerHTML = faqs.map(([q, a]) => `
     <div class="faq-item">
       <button class="faq-q" type="button" aria-expanded="false">${q}<span class="pm" aria-hidden="true"></span></button>
