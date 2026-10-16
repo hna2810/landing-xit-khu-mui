@@ -14,6 +14,8 @@ const CONFIG = {
   videos: (WP_DATA.videos && WP_DATA.videos.length) ? WP_DATA.videos : [],
   reviews: (WP_DATA.reviews && WP_DATA.reviews.length) ? WP_DATA.reviews : [],
   feedbackImages: (WP_DATA.feedbackImages && WP_DATA.feedbackImages.length) ? WP_DATA.feedbackImages : [],
+  feedbackImages34: (WP_DATA.feedbackImages34 && WP_DATA.feedbackImages34.length) ? WP_DATA.feedbackImages34 : [],
+  feedbackImages11: (WP_DATA.feedbackImages11 && WP_DATA.feedbackImages11.length) ? WP_DATA.feedbackImages11 : [],
   certificateImages: (WP_DATA.certificateImages && WP_DATA.certificateImages.length) ? WP_DATA.certificateImages : [],
   commitments: [
     { icon: 'doc', title: 'Đã công bố mỹ phẩm', text: 'Số công bố 60/26/CBMP-NB.' },
@@ -144,26 +146,65 @@ const VM = (() => {
   }
 })();
 
-/* Công dụng: đổi ảnh theo vùng */
+/* Công dụng: đổi ảnh theo vùng (4 ảnh, chuyển ảnh mềm mại) */
 (() => {
   const box = document.querySelector('[data-visual="usage"]'), zones = document.getElementById('zones');
   if (!box || !zones) return;
+  const buttons = [...zones.querySelectorAll('button')];
   const imgs = CONFIG.productImages.filter(Boolean);
   const fallback = CONFIG.usageImage || imgs[1] || imgs[0] || '';
-  const buttons = [...zones.querySelectorAll('button')];
-  const show = i => {
-    const label = buttons[i].textContent.trim(), own = (CONFIG.zoneImages || [])[i], src = own || fallback;
-    box.querySelectorAll('.photo, .render, .zone-badge, .usage-packshot-img, .bottle-render, .botanical').forEach(e => e.remove());
-    box.insertAdjacentHTML('afterbegin', src
-      ? `<img class="photo" src="${esc(src)}" alt="Xịt khử mùi Mây Mây – ${esc(label)}">`
-      : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
-    if (!own && CONFIG.showPlaceholders) {
-      markPreview();
-      box.insertAdjacentHTML('beforeend', `<span class="ph-badge zone-badge">Chờ ảnh: ${esc(label)}</span>`);
+
+  // Get or initialize slides
+  let slides = [...box.querySelectorAll('.usage-slide')];
+  if (slides.length === 0) {
+    const slidesWrap = document.createElement('div');
+    slidesWrap.className = 'usage-slides';
+    for (let i = 0; i < 4; i++) {
+      const slide = document.createElement('div');
+      slide.className = `usage-slide${i === 0 ? ' active' : ''}`;
+      slide.dataset.slide = String(i);
+      const own = (CONFIG.zoneImages || [])[i], src = own || fallback;
+      const label = buttons[i] ? buttons[i].textContent.trim() : `Vùng ${i + 1}`;
+      slide.innerHTML = src
+        ? `<img class="photo" src="${esc(src)}" alt="Xịt khử mùi Mây Mây – ${esc(label)}">`
+        : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`;
+      slidesWrap.appendChild(slide);
     }
-    buttons.forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
+    box.innerHTML = '';
+    box.appendChild(slidesWrap);
+    slides = [...slidesWrap.querySelectorAll('.usage-slide')];
+  } else {
+    // If slides exist in markup, update images if dynamic CONFIG provides specific zone images
+    slides.forEach((slide, i) => {
+      const own = (CONFIG.zoneImages || [])[i];
+      if (own) {
+        let img = slide.querySelector('img.photo');
+        if (img) {
+          img.src = own;
+        }
+      }
+    });
+  }
+
+  const show = i => {
+    const currentSlides = box.querySelectorAll('.usage-slide');
+    currentSlides.forEach((s, idx) => {
+      s.classList.toggle('active', idx === i);
+    });
+    buttons.forEach((b, j) => {
+      const isSelected = j === i;
+      b.setAttribute('aria-selected', String(isSelected));
+      b.classList.toggle('active', isSelected);
+    });
   };
-  zones.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(+b.dataset.zone); });
+
+  zones.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b && b.dataset.zone !== undefined) {
+      show(+b.dataset.zone);
+    }
+  });
+
   show(0);
 })();
 
@@ -308,28 +349,76 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   render();
 })();
 
-/* Feedback screenshots */
+/* Feedback screenshots (2 hàng slider) */
 (() => {
-  const sec = document.getElementById('feedback'), grid = document.getElementById('fbGrid');
-  const imgs = CONFIG.feedbackImages.filter(Boolean);
-  if (!imgs.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
-  if (!imgs.length) {
-    markPreview();
-    const ratios = ['3 / 5', '3 / 4', '1 / 1', '3 / 4.4'];
-    grid.innerHTML = Array.from({ length: 8 }, (_, i) => `<div class="ph" style="aspect-ratio:${ratios[i % 4]}"><span class="ph-badge">Chờ nội dung</span>Ảnh feedback ${i + 1}</div>`).join('');
+  const sec = document.getElementById('feedback');
+  const slider34 = document.getElementById('fbSlider34');
+  const slider11 = document.getElementById('fbSlider11');
+  if (!sec) return;
+
+  let list34 = (CONFIG.feedbackImages34 && CONFIG.feedbackImages34.length) ? CONFIG.feedbackImages34.filter(Boolean) : [];
+  let list11 = (CONFIG.feedbackImages11 && CONFIG.feedbackImages11.length) ? CONFIG.feedbackImages11.filter(Boolean) : [];
+  const legacyFbs = (CONFIG.feedbackImages && CONFIG.feedbackImages.length) ? CONFIG.feedbackImages.filter(Boolean) : [];
+
+  if (!list34.length && !list11.length && legacyFbs.length) {
+    const half = Math.ceil(legacyFbs.length / 2);
+    list34 = legacyFbs.slice(0, half);
+    list11 = legacyFbs.slice(half);
+  }
+
+  const allImgs = [...list34, ...list11];
+  if (!allImgs.length && !CONFIG.showPlaceholders) {
+    sec.remove();
     return;
   }
-  grid.innerHTML = imgs.map((s, i) => `<button type="button" data-i="${i}" aria-label="Xem feedback ${i + 1}"><img src="${esc(s)}" alt="Feedback khách hàng ${i + 1}" loading="lazy"></button>`).join('');
-  grid.addEventListener('click', e => { const b = e.target.closest('button'); if (b) LB.open(imgs, +b.dataset.i); });
+
+  if (slider34) {
+    if (list34.length) {
+      slider34.innerHTML = list34.map((s, i) => `
+        <button type="button" class="fb-card" data-idx="${i}" aria-label="Xem feedback dọc ${i + 1}">
+          <img src="${esc(s)}" alt="Feedback tin nhắn ${i + 1}" loading="lazy">
+        </button>`).join('');
+    } else if (CONFIG.showPlaceholders) {
+      markPreview();
+      slider34.innerHTML = Array.from({ length: 6 }, (_, i) => `
+        <div class="ph fb-card">
+          <span class="ph-badge">Chờ nội dung</span>
+          <div class="ph-text">Feedback 3:4 #${i + 1}</div>
+        </div>`).join('');
+    }
+    slider34.addEventListener('click', e => {
+      const b = e.target.closest('button.fb-card');
+      if (b && list34.length) {
+        LB.open(list34, +b.dataset.idx);
+      }
+    });
+  }
+
+  if (slider11) {
+    if (list11.length) {
+      slider11.innerHTML = list11.map((s, i) => `
+        <button type="button" class="fb-card" data-idx="${i}" aria-label="Xem hình ảnh feedback ${i + 1}">
+          <img src="${esc(s)}" alt="Hình ảnh feedback ${i + 1}" loading="lazy">
+        </button>`).join('');
+    } else if (CONFIG.showPlaceholders) {
+      markPreview();
+      slider11.innerHTML = Array.from({ length: 6 }, (_, i) => `
+        <div class="ph fb-card">
+          <span class="ph-badge">Chờ nội dung</span>
+          <div class="ph-text">Ảnh thực tế 1:1 #${i + 1}</div>
+        </div>`).join('');
+    }
+    slider11.addEventListener('click', e => {
+      const b = e.target.closest('button.fb-card');
+      if (b && list11.length) {
+        LB.open(list11, +b.dataset.idx);
+      }
+    });
+  }
 })();
 
-/* Trust & certificates */
+/* Certificates (Giấy công bố & Tem chống hàng giả) */
 (() => {
-  const trustGrid = document.getElementById('trustGrid');
-  if (trustGrid && CONFIG.commitments) {
-    trustGrid.innerHTML = CONFIG.commitments.map(c => `
-      <div class="trust-item reveal"><svg class="icon"><use href="#${ICONS[c.icon] || 'i-check'}"/></svg><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p></div>`).join('');
-  }
   const certs = document.getElementById('certs');
   if (!certs) return;
 

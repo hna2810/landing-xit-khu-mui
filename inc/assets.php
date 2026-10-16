@@ -115,6 +115,28 @@ function lx_enqueue_scripts() {
         }
     }
 
+    $feedback_34 = lx_get_field('lx_feedback_gallery_34', 'option', array());
+    $feedback_urls_34 = array();
+    if (!empty($feedback_34) && is_array($feedback_34)) {
+        foreach ($feedback_34 as $fb) {
+            $u = is_array($fb) ? (isset($fb['url']) ? $fb['url'] : '') : $fb;
+            if ($u) {
+                $feedback_urls_34[] = $u;
+            }
+        }
+    }
+
+    $feedback_11 = lx_get_field('lx_feedback_gallery_11', 'option', array());
+    $feedback_urls_11 = array();
+    if (!empty($feedback_11) && is_array($feedback_11)) {
+        foreach ($feedback_11 as $fb) {
+            $u = is_array($fb) ? (isset($fb['url']) ? $fb['url'] : '') : $fb;
+            if ($u) {
+                $feedback_urls_11[] = $u;
+            }
+        }
+    }
+
     $feedback_gallery = lx_get_field('lx_feedback_gallery', 'option', array());
     $feedback_urls = array();
     if (!empty($feedback_gallery) && is_array($feedback_gallery)) {
@@ -124,6 +146,12 @@ function lx_enqueue_scripts() {
                 $feedback_urls[] = $u;
             }
         }
+    }
+
+    if (empty($feedback_urls_34) && empty($feedback_urls_11) && !empty($feedback_urls)) {
+        $half = ceil(count($feedback_urls) / 2);
+        $feedback_urls_34 = array_slice($feedback_urls, 0, $half);
+        $feedback_urls_11 = array_slice($feedback_urls, $half);
     }
 
     $cert_doc_img   = lx_get_image_url('lx_cert_doc_image', '');
@@ -194,6 +222,8 @@ function lx_enqueue_scripts() {
         'videos'            => $videos,
         'reviews'           => $reviews,
         'feedbackImages'    => array_values($feedback_urls),
+        'feedbackImages34'  => array_values($feedback_urls_34),
+        'feedbackImages11'  => array_values($feedback_urls_11),
         'certificateItems'  => $certificate_items,
         'certificateImages' => array_values(array_filter(array($cert_doc_img, $cert_stamp_img))),
         'orderEndpoint'     => $sheet_url,

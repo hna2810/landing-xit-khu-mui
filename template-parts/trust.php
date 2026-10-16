@@ -45,31 +45,9 @@ $cert_items = array(
 ?>
 <!-- TRUST -->
 <section class="section trust panel" id="cam-ket">
-  <div class="container">
-    <p class="label reveal">Cam kết</p>
+  <div class="container text-center">
+    <p class="label center reveal">Cam kết</p>
     <h2 class="h2 display reveal d1">Yên tâm khi chọn <em>Mây Mây.</em></h2>
-    <div class="trust-grid" id="trustGrid">
-      <div class="trust-item reveal">
-        <svg class="icon"><use href="#i-doc"/></svg>
-        <h3>Đã công bố mỹ phẩm</h3>
-        <p>Số công bố 60/26/CBMP-NB được cấp bởi Sở Y Tế.</p>
-      </div>
-      <div class="trust-item reveal d1">
-        <svg class="icon"><use href="#i-leaf"/></svg>
-        <h3>Thảo mộc thuần chay</h3>
-        <p>Chiết xuất 100% thảo mộc tự nhiên: Bạc hà, trầu không, gừng và cam.</p>
-      </div>
-      <div class="trust-item reveal d2">
-        <svg class="icon"><use href="#i-truck"/></svg>
-        <h3>Freeship toàn quốc</h3>
-        <p>Miễn phí vận chuyển tận nhà trên toàn quốc, kiểm tra trước khi nhận.</p>
-      </div>
-      <div class="trust-item reveal d3">
-        <svg class="icon"><use href="#i-phone"/></svg>
-        <h3>Xác nhận trước khi giao</h3>
-        <p>Mây Mây gọi điện xác nhận thông tin đơn hàng trước khi gửi đi.</p>
-      </div>
-    </div>
     <div class="certs" id="certs">
       <?php foreach ($cert_items as $idx => $item) : ?>
         <?php if (!empty($item['image'])) : ?>

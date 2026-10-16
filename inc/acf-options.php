@@ -446,18 +446,38 @@ function lx_register_acf_field_group() {
                 ),
             ),
 
-            // ── TAB 8: FEEDBACK TIN NHẮN ─────────────────────────────
+            // ── TAB 8: FEEDBACK TIN NHẮN (2 HÀNG) ───────────────────
             array(
                 'key' => 'field_tab_feedback',
-                'label' => __('8. Feedback tin nhắn', 'lx-landing'),
+                'label' => __('8. Feedback khách hàng (2 hàng)', 'lx-landing'),
                 'type' => 'tab',
             ),
             array(
+                'key' => 'field_lx_feedback_gallery_34',
+                'label' => __('Hàng 1: Ảnh feedback dọc 3:4 (Chụp tin nhắn Zalo, Messenger, SMS...)', 'lx-landing'),
+                'name' => 'lx_feedback_gallery_34',
+                'type' => 'gallery',
+                'instructions' => __('Tải lên các ảnh feedback dạng dọc tỷ lệ 3:4 (chụp màn hình tin nhắn, review trên điện thoại).', 'lx-landing'),
+                'return_format' => 'url',
+                'insert' => 'append',
+                'library' => 'all',
+            ),
+            array(
+                'key' => 'field_lx_feedback_gallery_11',
+                'label' => __('Hàng 2: Ảnh feedback vuông 1:1 (Ảnh thực tế, cận cảnh sản phẩm)', 'lx-landing'),
+                'name' => 'lx_feedback_gallery_11',
+                'type' => 'gallery',
+                'instructions' => __('Tải lên các ảnh feedback tỷ lệ vuông 1:1 (khách cầm sản phẩm trên tay, ảnh cận cảnh chai xịt...).', 'lx-landing'),
+                'return_format' => 'url',
+                'insert' => 'append',
+                'library' => 'all',
+            ),
+            array(
                 'key' => 'field_lx_feedback_gallery',
-                'label' => __('Ảnh chụp tin nhắn / Feedback Zalo, Messenger', 'lx-landing'),
+                'label' => __('Ảnh feedback chung (Dự phòng / Legacy)', 'lx-landing'),
                 'name' => 'lx_feedback_gallery',
                 'type' => 'gallery',
-                'instructions' => __('Tải lên các ảnh chụp màn hình tin nhắn khen ngợi của khách hàng.', 'lx-landing'),
+                'instructions' => __('Nếu để trống 2 hàng trên, hệ thống sẽ tự động chia đều thư viện này cho cả 2 hàng slider.', 'lx-landing'),
                 'return_format' => 'url',
                 'insert' => 'append',
                 'library' => 'all',
