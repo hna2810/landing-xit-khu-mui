@@ -32,7 +32,7 @@ function lx_ensure_cf7_form() {
         . '</div>' . "\n"
         . '<div class="field">' . "\n"
         . '  <label for="fAddress">Địa chỉ nhận hàng <i>*</i></label>' . "\n"
-        . '  [textarea* your-address id:fAddress class:input autocomplete:street-address placeholder "Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..."]' . "\n"
+        . '  [text* your-address id:fAddress class:input autocomplete:street-address placeholder "Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..."]' . "\n"
         . '</div>' . "\n"
         . '<div class="field">' . "\n"
         . '  <span class="field-label">Chọn mua combo ưu đãi <i style="color:#e5484d; font-style:normal">*</i></span>' . "\n"
@@ -251,7 +251,7 @@ function lx_render_order_form() {
       </div>
       <div class="field">
         <label for="fAddress">Địa chỉ nhận hàng</label>
-        <textarea id="fAddress" name="address" autocomplete="street-address" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"></textarea>
+        <input id="fAddress" name="address" type="text" autocomplete="street-address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành...">
         <div class="err">Vui lòng nhập địa chỉ nhận hàng.</div>
       </div>
       <div class="field">
