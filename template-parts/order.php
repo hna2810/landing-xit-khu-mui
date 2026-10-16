@@ -28,16 +28,16 @@ $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', 'https://script.google.
         <li><svg class="icon"><use href="#i-check"/></svg>Freeship toàn quốc</li>
         <li><svg class="icon"><use href="#i-check"/></svg>Thảo mộc thuần chay, hương thanh mát</li>
       </ul>
-      <div class="order-visual reveal d3" id="orderVisual" style="position:relative; display:flex; align-items:center; justify-content:center;">
+      <div class="order-visual reveal d3" id="orderVisual">
         <?php if (!empty($order_img)) : ?>
-          <img src="<?php echo $order_img; ?>" alt="Xịt Khử Mùi Gừng Cam Mây Mây" class="order-packshot-img" style="max-height:85%; max-width:85%; object-fit:contain; z-index:2; position:relative; pointer-events:none; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.12));">
+          <img src="<?php echo esc_url($order_img); ?>" alt="Xịt Khử Mùi Gừng Cam Mây Mây" loading="lazy">
         <?php else : ?>
           <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
             <use href="#bottle-shape"/>
           </svg>
+          <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
+          <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-orange"/></svg>
         <?php endif; ?>
-        <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
-        <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-orange"/></svg>
       </div>
     </div>
 

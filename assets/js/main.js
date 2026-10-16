@@ -178,6 +178,8 @@ document.querySelectorAll('[data-problem]').forEach(el => {
 /* Ảnh 3 bước sử dụng */
 document.querySelectorAll('[data-step]').forEach(el => {
   const src = (CONFIG.stepImages || [])[+el.dataset.step], title = el.parentElement.querySelector('h3').textContent;
+  let existingImg = el.querySelector('img');
+  if (existingImg) return;
   if (src) el.insertAdjacentHTML('afterbegin', `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`);
   else if (CONFIG.showPlaceholders) { markPreview(); el.insertAdjacentHTML('afterbegin', `<div class="ph"><span class="ph-badge">Chờ nội dung</span>Ảnh 4:5<br>${esc(title)}</div>`); }
   else el.style.aspectRatio = 'auto', el.style.height = '76px', el.style.background = 'transparent';
@@ -186,12 +188,20 @@ document.querySelectorAll('[data-step]').forEach(el => {
 /* Ảnh sản phẩm cạnh form đặt hàng */
 (() => {
   const el = document.getElementById('orderVisual');
+  if (!el) return;
   const src = CONFIG.orderImage || CONFIG.productImages.filter(Boolean)[0];
-  if (src) {
-    el.querySelectorAll('.botanical').forEach(b => b.remove());
+  let existingImg = el.querySelector('img');
+  if (!existingImg && src) {
+    el.querySelectorAll('.botanical, .bottle-render, .render').forEach(b => b.remove());
     el.insertAdjacentHTML('afterbegin', `<img src="${esc(src)}" alt="Xịt khử mùi Gừng Cam Mây Mây 30ml" loading="lazy">`);
-  } else {
-    el.insertAdjacentHTML('afterbegin', `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
+  } else if (!existingImg && !src) {
+    if (!el.querySelector('.bottle-render') && !el.querySelector('.render')) {
+      el.insertAdjacentHTML('afterbegin', `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
+    }
+  } else if (existingImg) {
+    el.querySelectorAll('.botanical, .bottle-render, .render, .order-packshot-img').forEach(b => {
+      if (b !== existingImg) b.remove();
+    });
   }
 })();
 
