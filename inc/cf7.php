@@ -147,6 +147,14 @@ function lx_cf7_save_to_google_sheet($contact_form) {
         return;
     }
 
+    // Cơ chế chống gửi trùng đơn (Anti-duplicate lock trong 30 giây)
+    $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+    $dup_transient_key = 'lx_lead_' . md5($clean_phone . '_' . $package);
+    if (get_transient($dup_transient_key)) {
+        return;
+    }
+    set_transient($dup_transient_key, 1, 30);
+
     // Lấy URL Web App Google Sheet từ ACF options hoặc hằng số
     $default_sheet = 'https://script.google.com/macros/s/AKfycbx2mCi48FGEQtg9pjX_YuWUxFbQdxe2aj5iUHDDj4-4s9qLyykE6EZySZ1V6UnZydHJ-A/exec';
     $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', $default_sheet);
@@ -155,15 +163,18 @@ function lx_cf7_save_to_google_sheet($contact_form) {
     }
 
     if (!empty($sheet_url) && filter_var($sheet_url, FILTER_VALIDATE_URL)) {
-        // Tự động phân loại giá tiền và số lượng
+        // Tự động phân loại giá tiền và số lượng chính xác
         $price = '49.000đ';
         $quantity = 1;
-        if (strpos($package, '89.000') !== false || strpos($package, '2 chai') !== false) {
-            $price = '89.000đ';
-            $quantity = 2;
-        } elseif (strpos($package, '129.000') !== false || strpos($package, '3 chai') !== false) {
+        if (strpos($package, '3 chai') !== false || strpos($package, '129.000') !== false) {
             $price = '129.000đ';
             $quantity = 3;
+        } elseif (strpos($package, '2 chai') !== false || (strpos($package, '89.000') !== false && strpos($package, '1 chai') === false)) {
+            $price = '89.000đ';
+            $quantity = 2;
+        } else {
+            $price = '49.000đ';
+            $quantity = 1;
         }
 
         $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : '';
