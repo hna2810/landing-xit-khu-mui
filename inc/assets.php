@@ -115,8 +115,9 @@ function lx_enqueue_scripts() {
         }
     }
 
-    if (empty($reviews) && function_exists('lx_get_seeding_reviews')) {
-        $reviews = lx_get_seeding_reviews();
+    if (function_exists('lx_get_seeding_reviews')) {
+        $seeding = lx_get_seeding_reviews();
+        $reviews = array_merge($reviews, $seeding);
     }
 
     $feedback_34 = lx_get_field('lx_feedback_gallery_34', 'option', array());
