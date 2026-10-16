@@ -126,6 +126,9 @@ function lx_enqueue_scripts() {
         }
     }
 
+    $cert_doc_img   = lx_get_image_url('lx_cert_doc_image', '');
+    $cert_stamp_img = lx_get_image_url('lx_cert_stamp_image', '');
+
     $cert_gallery = lx_get_field('lx_certificate_gallery', 'option', array());
     $cert_urls = array();
     if (!empty($cert_gallery) && is_array($cert_gallery)) {
@@ -136,6 +139,26 @@ function lx_enqueue_scripts() {
             }
         }
     }
+
+    if (empty($cert_doc_img) && !empty($cert_urls[0])) {
+        $cert_doc_img = $cert_urls[0];
+    }
+    if (empty($cert_stamp_img) && !empty($cert_urls[1])) {
+        $cert_stamp_img = $cert_urls[1];
+    }
+
+    $certificate_items = array(
+        array(
+            'id'    => 'doc',
+            'title' => 'Giấy công bố mỹ phẩm',
+            'image' => $cert_doc_img,
+        ),
+        array(
+            'id'    => 'stamp',
+            'title' => 'Tem chống hàng giả',
+            'image' => $cert_stamp_img,
+        ),
+    );
 
     $default_sheet = 'https://script.google.com/macros/s/AKfycbx2mCi48FGEQtg9pjX_YuWUxFbQdxe2aj5iUHDDj4-4s9qLyykE6EZySZ1V6UnZydHJ-A/exec';
     $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', $default_sheet);
@@ -171,7 +194,8 @@ function lx_enqueue_scripts() {
         'videos'            => $videos,
         'reviews'           => $reviews,
         'feedbackImages'    => array_values($feedback_urls),
-        'certificateImages' => array_values($cert_urls),
+        'certificateItems'  => $certificate_items,
+        'certificateImages' => array_values(array_filter(array($cert_doc_img, $cert_stamp_img))),
         'orderEndpoint'     => $sheet_url,
         'price'             => 49000,
         'listPrice'         => 89000,

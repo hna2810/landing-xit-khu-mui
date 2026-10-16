@@ -322,16 +322,52 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 
 /* Trust & certificates */
 (() => {
-  document.getElementById('trustGrid').innerHTML = CONFIG.commitments.map(c => `
-    <div class="trust-item reveal"><svg class="icon"><use href="#${ICONS[c.icon] || 'i-check'}"/></svg><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p></div>`).join('');
-  const certs = document.getElementById('certs'), imgs = CONFIG.certificateImages.filter(Boolean);
-  if (imgs.length) {
-    certs.innerHTML = imgs.map((s, i) => `<button type="button" data-i="${i}" aria-label="Xem chứng nhận ${i + 1}"><img src="${esc(s)}" alt="Giấy công bố / chứng nhận ${i + 1}" loading="lazy"></button>`).join('');
-    certs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) LB.open(imgs, +b.dataset.i); });
-  } else if (CONFIG.showPlaceholders) {
-    markPreview();
-    certs.innerHTML = ['Giấy công bố mỹ phẩm', 'Phiếu kiểm nghiệm', 'Chứng nhận khác'].map(t => `<div class="ph"><span class="ph-badge">Chờ nội dung</span>${t}</div>`).join('');
-  } else certs.remove();
+  const trustGrid = document.getElementById('trustGrid');
+  if (trustGrid && CONFIG.commitments) {
+    trustGrid.innerHTML = CONFIG.commitments.map(c => `
+      <div class="trust-item reveal"><svg class="icon"><use href="#${ICONS[c.icon] || 'i-check'}"/></svg><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p></div>`).join('');
+  }
+  const certs = document.getElementById('certs');
+  if (!certs) return;
+
+  const certItems = (CONFIG.certificateItems && CONFIG.certificateItems.length) ? CONFIG.certificateItems : [
+    { id: 'doc', title: 'Giấy công bố mỹ phẩm', image: (CONFIG.certificateImages && CONFIG.certificateImages[0]) || '' },
+    { id: 'stamp', title: 'Tem chống hàng giả', image: (CONFIG.certificateImages && CONFIG.certificateImages[1]) || '' }
+  ];
+
+  const validImgs = certItems.map(item => item.image).filter(Boolean);
+
+  certs.innerHTML = certItems.map((item, idx) => {
+    if (item.image) {
+      const imgIdx = validImgs.indexOf(item.image);
+      return `<button type="button" class="cert-card has-img reveal" data-i="${imgIdx >= 0 ? imgIdx : idx}" aria-label="Xem ${esc(item.title)}">
+        <div class="cert-img-wrap"><img src="${esc(item.image)}" alt="${esc(item.title)}" loading="lazy"></div>
+        <div class="cert-caption"><b>${esc(item.title)}</b></div>
+      </button>`;
+    } else if (CONFIG.showPlaceholders) {
+      markPreview();
+      return `<div class="ph cert-ph reveal">
+        <span class="ph-badge">Chờ nội dung</span>
+        <div class="ph-content">
+          <svg class="icon" style="width:36px;height:36px;margin:0 auto 10px;opacity:.5;"><use href="#i-doc"/></svg>
+          <b>${esc(item.title)}</b>
+          <small style="display:block;margin-top:4px;opacity:.65;">Ảnh dọc 3:4</small>
+        </div>
+      </div>`;
+    }
+    return '';
+  }).filter(Boolean).join('');
+
+  if (!certs.innerHTML.trim()) {
+    certs.remove();
+  } else if (validImgs.length) {
+    certs.addEventListener('click', e => {
+      const b = e.target.closest('button.has-img');
+      if (b && b.dataset.i !== undefined) {
+        LB.open(validImgs, +b.dataset.i);
+      }
+    });
+  }
 })();
 
 /* Countdown – flash sale theo ngày */
