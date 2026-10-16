@@ -36,25 +36,28 @@ $default_faqs = array(
 $items = (!empty($faqs) && is_array($faqs)) ? $faqs : $default_faqs;
 ?>
 <!-- FAQ -->
-<section class="section" id="faq">
-  <div class="container faq">
-    <div>
-      <p class="label reveal">Hỏi đáp</p>
+<section class="section" id="hoi-dap">
+  <div class="container">
+    <div class="text-center">
+      <p class="label center reveal">Hỏi đáp</p>
       <h2 class="h2 display reveal d1">Những thắc mắc thường gặp.</h2>
     </div>
-    <div class="faq-list reveal d1" id="faqList">
+    <div class="faq reveal d1" id="faq">
       <?php foreach ($items as $idx => $f) : 
         $q = isset($f['question']) ? $f['question'] : '';
         $a = isset($f['answer']) ? $f['answer'] : '';
         if (!$q) continue;
+        $is_open = ($idx === 0);
       ?>
-        <details class="faq-item" <?php echo $idx === 0 ? 'open' : ''; ?>>
-          <summary>
+        <div class="faq-item <?php echo $is_open ? 'open' : ''; ?>">
+          <button class="faq-q" type="button" aria-expanded="<?php echo $is_open ? 'true' : 'false'; ?>">
             <span><?php echo $q; ?></span>
-            <svg class="icon"><use href="#i-chev-r"/></svg>
-          </summary>
-          <div class="faq-ans"><p><?php echo $a; ?></p></div>
-        </details>
+            <span class="pm" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a" style="<?php echo $is_open ? 'max-height:none;' : ''; ?>">
+            <p><?php echo $a; ?></p>
+          </div>
+        </div>
       <?php endforeach; ?>
     </div>
   </div>

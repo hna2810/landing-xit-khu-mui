@@ -391,15 +391,16 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
 
 /* FAQ */
 .faq { max-width: 820px; margin: 44px auto 0; display: grid; gap: 12px; }
-.faq-item { background: var(--paper); border-radius: 22px; padding: 0 26px; transition: background .3s; }
-.faq-item.open { background: var(--primary-tint); }
+.faq-item { background: #ffffff; border: 1px solid rgba(0,0,0,.06); box-shadow: 0 4px 16px rgba(0,0,0,.03); border-radius: 22px; padding: 0 26px; transition: all .3s ease; }
+.faq-item.open { background: var(--primary-tint); border-color: rgba(220,160,110,.3); }
 .faq-q { width: 100%; background: none; border: 0; cursor: pointer; text-align: left; font: inherit; font-size: 17px; font-weight: 500; color: var(--ink); padding: 22px 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.faq-q .pm { position: relative; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--white); }
+.faq-q span:first-child { flex: 1; }
+.faq-q .pm { position: relative; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
 .faq-q .pm::before, .faq-q .pm::after { content: ""; position: absolute; left: 10px; top: 15.25px; width: 12px; height: 1.5px; border-radius: 1px; background: var(--ink); transition: transform .3s ease; }
 .faq-q .pm::after { transform: rotate(90deg); }
 .faq-item.open .pm::after { transform: rotate(0); }
 .faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-.faq-a p { padding: 0 40px 24px 0; color: var(--ink-2); }
+.faq-a p { padding: 0 40px 24px 0; color: var(--ink-2); line-height: 1.65; }
 @media (max-width: 640px) { .faq-item { padding: 0 20px; } .faq-a p { padding-right: 0; } }
 
 /* Footer */

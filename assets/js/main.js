@@ -508,32 +508,40 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 
 /* FAQ */
 (() => {
-  if (document.getElementById('faqList')) {
-    // Already rendered by PHP / ACF with <details><summary>
-    return;
-  }
-  const faqs = [
-    ['Xịt khử mùi Mây Mây dùng được cho những vùng nào?', 'Sản phẩm dùng để chăm sóc mùi vùng nách, vùng chân và cơ thể; đồng thời có thể xịt khử mùi vùng tiểu EVA sau sinh. Không xịt vào mắt, niêm mạc hoặc vùng da tổn thương.'],
-    ['Sau khi xịt bao lâu thì khô?', 'Sản phẩm khô thoáng khoảng 30 giây. Bạn chỉ cần để da khô tự nhiên rồi mặc quần áo.'],
-    ['Thành phần của sản phẩm là gì?', 'Thành phần thảo mộc thuần chay từ bạc hà, trầu không, gừng và cam, cho hương thảo mộc thanh mát, dễ chịu.'],
-    ['Cách sử dụng như thế nào?', 'Bước 1: Lắc nhẹ chai xịt. Bước 2: Xịt lên vùng da, cách khoảng 10 – 15cm. Bước 3: Để da khô tự nhiên sau đó mặc quần áo.'],
-    ['Giá bán và phí vận chuyển?', 'Chương trình flash sale: 49.000đ/chai 30ml (giá niêm yết 89.000đ), freeship toàn quốc.'],
-    ['Hạn sử dụng và cách bảo quản?', 'Hạn sử dụng 02 năm. Bảo quản nơi khô thoáng, tránh ánh nắng trực tiếp.'],
-    ['Đặt hàng xong thì sao?', 'Sau khi bạn điền form, Mây Mây sẽ liên hệ qua số điện thoại để xác nhận đơn. Vui lòng kiểm tra kỹ họ tên, số điện thoại và địa chỉ nhận hàng trước khi xác nhận.']
-  ];
   const list = document.getElementById('faq');
   if (!list) return;
-  list.innerHTML = faqs.map(([q, a]) => `
-    <div class="faq-item">
-      <button class="faq-q" type="button" aria-expanded="false">${q}<span class="pm" aria-hidden="true"></span></button>
-      <div class="faq-a"><p>${a}</p></div>
-    </div>`).join('');
+
+  if (!list.children.length) {
+    const faqs = [
+      ['Xịt khử mùi Mây Mây dùng được cho những vùng nào?', 'Sản phẩm dùng để chăm sóc mùi vùng nách, vùng chân và cơ thể; đồng thời có thể xịt khử mùi vùng tiểu EVA sau sinh. Không xịt vào mắt, niêm mạc hoặc vùng da tổn thương.'],
+      ['Sau khi xịt bao lâu thì khô?', 'Sản phẩm khô thoáng khoảng 30 giây. Bạn chỉ cần để da khô tự nhiên rồi mặc quần áo.'],
+      ['Thành phần của sản phẩm là gì?', 'Thành phần thảo mộc thuần chay từ bạc hà, trầu không, gừng và cam, cho hương thảo mộc thanh mát, dễ chịu.'],
+      ['Cách sử dụng như thế nào?', 'Bước 1: Lắc nhẹ chai xịt. Bước 2: Xịt lên vùng da, cách khoảng 10 – 15cm. Bước 3: Để da khô tự nhiên sau đó mặc quần áo.'],
+      ['Giá bán và phí vận chuyển?', 'Chương trình flash sale: 49.000đ/chai 30ml (giá niêm yết 89.000đ), freeship toàn quốc.'],
+      ['Hạn sử dụng và cách bảo quản?', 'Hạn sử dụng 02 năm. Bảo quản nơi khô thoáng, tránh ánh nắng trực tiếp.'],
+      ['Đặt hàng xong thì sao?', 'Sau khi bạn điền form, Mây Mây sẽ liên hệ qua số điện thoại để xác nhận đơn. Vui lòng kiểm tra kỹ họ tên, số điện thoại và địa chỉ nhận hàng trước khi xác nhận.']
+    ];
+    list.innerHTML = faqs.map(([q, a], i) => `
+      <div class="faq-item ${i === 0 ? 'open' : ''}">
+        <button class="faq-q" type="button" aria-expanded="${i === 0 ? 'true' : 'false'}">
+          <span>${q}</span>
+          <span class="pm" aria-hidden="true"></span>
+        </button>
+        <div class="faq-a" style="${i === 0 ? 'max-height:none;' : ''}"><p>${a}</p></div>
+      </div>`).join('');
+  }
+
   list.addEventListener('click', e => {
     const btn = e.target.closest('.faq-q'); if (!btn) return;
     const item = btn.parentElement, a = item.querySelector('.faq-a');
+    if (!a) return;
     const open = item.classList.toggle('open');
-    btn.setAttribute('aria-expanded', open);
-    a.style.maxHeight = open ? a.scrollHeight + 'px' : 0;
+    btn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      a.style.maxHeight = a.scrollHeight + 'px';
+    } else {
+      a.style.maxHeight = '0px';
+    }
   });
 })();
 
