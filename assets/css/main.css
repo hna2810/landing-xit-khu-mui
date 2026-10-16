@@ -472,23 +472,20 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
 .sticky .btn { margin-left: auto; padding: 13px 26px; }
 @media (min-width: 901px) { .sticky { display: none; } }
 
-/* Order Seeding Toast (Góc trái màn hình) */
-.order-toast { position: fixed; left: 20px; bottom: 24px; z-index: 85; display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.98); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,160,89,.35); box-shadow: 0 16px 36px -10px rgba(43,34,26,.22), 0 0 0 1px rgba(255,160,89,.15); border-radius: 18px; padding: 10px 14px 10px 10px; max-width: 340px; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(24px) scale(.96); transition: opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1), visibility .4s; pointer-events: none; }
+/* Order Seeding Toast (Góc trái màn hình - Chỉ text) */
+.order-toast { position: fixed; left: 20px; bottom: 24px; z-index: 85; display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.98); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,160,89,.3); box-shadow: 0 16px 36px -10px rgba(43,34,26,.16), 0 0 0 1px rgba(255,160,89,.12); border-radius: 16px; padding: 12px 18px 12px 16px; max-width: 320px; cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(24px) scale(.96); transition: opacity .4s cubic-bezier(.16,1,.3,1), transform .4s cubic-bezier(.16,1,.3,1), visibility .4s; pointer-events: none; }
 .order-toast.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); pointer-events: auto; }
-.order-toast:hover { box-shadow: 0 20px 40px -10px rgba(216,92,24,.3); border-color: rgba(230,104,29,.6); }
-.order-toast-thumb { flex: none; width: 46px; height: 46px; border-radius: 12px; overflow: hidden; background: var(--paper); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,160,89,.25); }
-.order-toast-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.order-toast-content { flex: 1; min-width: 0; line-height: 1.35; }
-.order-toast-buyer { font-size: 13px; color: var(--ink); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-toast:hover { box-shadow: 0 20px 40px -10px rgba(216,92,24,.25); border-color: rgba(230,104,29,.5); }
+.order-toast-content { flex: 1; min-width: 0; line-height: 1.4; }
+.order-toast-buyer { font-size: 13.5px; color: var(--ink); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .order-toast-buyer strong { font-weight: 600; color: var(--ink); }
-.order-toast-product { font-size: 12px; color: var(--ink-2); margin: 2px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.order-toast-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 500; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1px 7px; border-radius: 999px; margin-top: 4px; }
+.order-toast-product { font-size: 12px; color: var(--ink-2); margin: 3px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.order-toast-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: #15803d; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 2px 8px; border-radius: 999px; margin-top: 5px; }
 .order-toast-badge svg { width: 11px; height: 11px; }
 .order-toast-close { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(0,0,0,.1); background: var(--white); color: var(--ink-2); font-size: 13px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.12); transition: background .2s, color .2s; }
 .order-toast-close:hover { background: var(--ink); color: var(--white); }
 @media (max-width: 900px) {
-  .order-toast { left: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); max-width: 310px; padding: 8px 12px 8px 8px; }
-  .order-toast-thumb { width: 42px; height: 42px; }
+  .order-toast { left: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); max-width: 300px; padding: 10px 14px 10px 14px; }
   .order-toast-buyer { font-size: 12.5px; }
   .order-toast-product { font-size: 11.5px; }
 }

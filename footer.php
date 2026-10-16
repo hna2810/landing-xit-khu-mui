@@ -42,19 +42,9 @@ if (!defined('ABSPATH')) {
   <div class="modal-inner"></div>
 </div>
 
-<?php
-$toast_img = lx_get_image_url('lx_hero_product_image', '');
-?>
-<!-- ORDER NOTIFICATION TOAST (SEEDING GÓC MÀN HÌNH) -->
+<!-- ORDER NOTIFICATION TOAST (SEEDING GÓC MÀN HÌNH - CHỈ TEXT) -->
 <aside class="order-toast" id="orderToast" aria-live="polite" role="status" style="display:none;">
   <button type="button" class="order-toast-close" id="orderToastClose" aria-label="Đóng thông báo">&times;</button>
-  <div class="order-toast-thumb">
-    <?php if (!empty($toast_img)) : ?>
-      <img src="<?php echo esc_url($toast_img); ?>" alt="Xịt khử mùi Gừng Cam Mây Mây">
-    <?php else : ?>
-      <svg viewBox="0 0 240 560" style="width:24px;height:40px;"><use href="#packshot"/></svg>
-    <?php endif; ?>
-  </div>
   <div class="order-toast-content">
     <p class="order-toast-buyer"><strong id="toastBuyer">Chị Thu Trang (Hà Nội)</strong> vừa đặt mua</p>
     <p class="order-toast-product"><span id="toastPackage">Combo 2 chai 30ml</span> · <span id="toastTime" style="color:var(--herb);font-weight:500;">Vừa xong</span></p>
