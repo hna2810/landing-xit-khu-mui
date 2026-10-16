@@ -518,23 +518,25 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 /* Contact Form 7 Integration */
 (() => {
   const updateCf7Package = () => {
+    const totalEl = document.getElementById('cf7Total');
     const checked = document.querySelector('.packages-wrap input[name="package"]:checked');
-    if (checked) {
-      const val = checked.value || '';
-      const totalEl = document.getElementById('cf7Total');
-      if (totalEl) {
-        if (val.includes('89.000') || val.includes('Combo 2') || val.includes('2 chai')) {
-          totalEl.textContent = '89.000đ';
-        } else if (val.includes('129.000') || val.includes('Combo 3') || val.includes('3 chai')) {
-          totalEl.textContent = '129.000đ';
-        } else {
-          totalEl.textContent = '49.000đ';
-        }
-      }
-      document.querySelectorAll('.packages-wrap .wpcf7-list-item').forEach(item => {
-        item.classList.toggle('active', item.contains(checked));
-      });
+    if (!checked) {
+      if (totalEl) totalEl.textContent = '49.000đ';
+      return;
     }
+    const val = checked.value || '';
+    if (totalEl) {
+      if (val.includes('129.000') || val.includes('Combo 3') || val.includes('3 chai')) {
+        totalEl.textContent = '129.000đ';
+      } else if (val.includes('Combo 2') || val.includes('2 chai') || (val.includes('89.000') && !val.includes('1 chai'))) {
+        totalEl.textContent = '89.000đ';
+      } else {
+        totalEl.textContent = '49.000đ';
+      }
+    }
+    document.querySelectorAll('.packages-wrap .wpcf7-list-item').forEach(item => {
+      item.classList.toggle('active', item.contains(checked));
+    });
   };
 
   document.addEventListener('change', e => {
@@ -625,7 +627,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
       return;
     }
     const f = form.elements;
-    const qty = +f.package.value;
+    const qty = (f.package && f.package.value) ? +f.package.value : 1;
     const data = {
       name: f.name.value.trim(),
       phone: f.phone.value.replace(/[\s.-]/g, ''),

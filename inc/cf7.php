@@ -35,10 +35,6 @@ function lx_ensure_cf7_form() {
         . '  [text* your-address id:fAddress class:input autocomplete:street-address placeholder "Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành..."]' . "\n"
         . '</div>' . "\n"
         . '<div class="field">' . "\n"
-        . '  <span class="field-label">Chọn mua combo ưu đãi <i style="color:#e5484d; font-style:normal">*</i></span>' . "\n"
-        . '  <div class="packages-wrap">[radio package use_label_element default:1 "1 chai 30ml – 49.000đ (giá gốc 89.000đ) + FREESHIP" "Combo 2 chai 30ml – 89.000đ (giá gốc 178.000đ) + FREESHIP" "Combo 3 chai 30ml – 129.000đ (giá gốc 267.000đ) + FREESHIP"]</div>' . "\n"
-        . '</div>' . "\n"
-        . '<div class="field">' . "\n"
         . '  <label for="fNote">Ghi chú (nếu có)</label>' . "\n"
         . '  [text your-note id:fNote class:input placeholder "Ví dụ: Giao giờ hành chính, gọi trước khi giao..."]' . "\n"
         . '</div>' . "\n"
@@ -57,7 +53,23 @@ function lx_ensure_cf7_form() {
         'accept_terms'             => 'Vui lòng đồng ý với các điều khoản trước khi gửi đơn.',
         'invalid_required'         => 'Vui lòng nhập thông tin vào trường này.',
         'invalid_tel'              => 'Số điện thoại chưa đúng định dạng (VD: 0901 234 567).',
-        'invalid_radio'            => 'Vui lòng chọn gói sản phẩm phù hợp.',
+        'invalid_radio'            => 'Vui lòng chọn thông tin phù hợp.',
+    );
+
+    $server_host = isset($_SERVER['SERVER_NAME']) ? sanitize_text_field($_SERVER['SERVER_NAME']) : 'khumui.homecarevietnam.com';
+    $mail_tags = array(
+        'active'    => true,
+        'subject'   => 'Đơn đặt hàng Xịt Khử Mùi Mây Mây từ [your-name]',
+        'sender'    => '[_site_title] <wordpress@' . $server_host . '>',
+        'recipient' => get_option('admin_email'),
+        'body'      => "Thông tin đơn hàng mới từ Landing Page:\n\n"
+                     . "Họ tên: [your-name]\n"
+                     . "Số điện thoại: [your-phone]\n"
+                     . "Địa chỉ nhận hàng: [your-address]\n"
+                     . "Sản phẩm: 1 chai 30ml (49.000đ - Freeship)\n"
+                     . "Ghi chú: [your-note]\n"
+                     . "Thời gian: [_date] [_time]\n"
+                     . "Trang gửi: [_url]\n",
     );
 
     // Kiểm tra xem form đã tồn tại chưa
@@ -71,6 +83,7 @@ function lx_ensure_cf7_form() {
     if (!empty($existing)) {
         $fid = $existing[0]->ID;
         update_post_meta($fid, '_form', $form_content);
+        update_post_meta($fid, '_mail', $mail_tags);
         update_post_meta($fid, '_messages', $messages);
         update_post_meta($fid, '_locale', 'vi');
         return $fid;
@@ -83,22 +96,6 @@ function lx_ensure_cf7_form() {
     ));
 
     if ($form_id && !is_wp_error($form_id)) {
-        $server_host = isset($_SERVER['SERVER_NAME']) ? sanitize_text_field($_SERVER['SERVER_NAME']) : 'khumui.homecarevietnam.com';
-        $mail_tags = array(
-            'active'    => true,
-            'subject'   => 'Đơn đặt hàng Xịt Khử Mùi Mây Mây từ [your-name]',
-            'sender'    => '[_site_title] <wordpress@' . $server_host . '>',
-            'recipient' => get_option('admin_email'),
-            'body'      => "Thông tin đơn hàng mới từ Landing Page:\n\n"
-                         . "Họ tên: [your-name]\n"
-                         . "Số điện thoại: [your-phone]\n"
-                         . "Địa chỉ nhận hàng: [your-address]\n"
-                         . "Gói chọn mua: [package]\n"
-                         . "Ghi chú: [your-note]\n"
-                         . "Thời gian: [_date] [_time]\n"
-                         . "Trang gửi: [_url]\n",
-        );
-
         update_post_meta($form_id, '_form', $form_content);
         update_post_meta($form_id, '_mail', $mail_tags);
         update_post_meta($form_id, '_messages', $messages);
@@ -255,14 +252,14 @@ function lx_render_order_form() {
         <div class="err">Vui lòng nhập địa chỉ nhận hàng.</div>
       </div>
       <div class="field">
-        <span class="field-label">Chọn mua</span>
-        <div class="packages" id="packages"></div>
+        <label for="fNote">Ghi chú (nếu có)</label>
+        <input id="fNote" name="note" type="text" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao...">
       </div>
       <div class="total">
-        <span>Tổng thanh toán<small>Miễn phí vận chuyển</small></span>
+        <span>Tổng thanh toán<small>Miễn phí vận chuyển toàn quốc</small></span>
         <b id="total">49.000đ</b>
       </div>
-      <button type="submit" class="btn btn-block" id="submitBtn">Đặt hàng ngay</button>
+      <button type="submit" class="btn btn-block" id="submitBtn">Freeship toàn quốc – Đặt hàng ngay!</button>
       <p class="form-note">(*) Vui lòng kiểm tra lại thông tin nhận hàng trước khi xác nhận đơn.</p>
     </form>
     <?php
