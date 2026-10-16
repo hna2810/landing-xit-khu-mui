@@ -105,39 +105,58 @@ const VM = (() => {
 (() => {
   const imgs = CONFIG.productImages.filter(Boolean);
   const heroBox = document.querySelector('[data-visual="hero"]');
-  heroBox.insertAdjacentHTML('afterbegin', imgs[0]
-    ? `<img class="photo" src="${esc(imgs[0])}" alt="Xịt khử mùi Gừng Cam Mây Mây 30ml">`
-    : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
-  if (imgs[0]) heroBox.querySelectorAll('.botanical').forEach(b => b.remove());
-  if (!imgs.length) return;
-  const main = document.querySelector('[data-visual="hero"]'), photo = main.querySelector('img.photo');
+  if (!heroBox) return;
+
+  let photo = heroBox.querySelector('img.photo');
+  if (!photo && imgs[0]) {
+    heroBox.insertAdjacentHTML('afterbegin', `<img class="photo" src="${esc(imgs[0])}" alt="Xịt khử mùi Gừng Cam">`);
+    photo = heroBox.querySelector('img.photo');
+  } else if (!photo && !imgs.length) {
+    if (!heroBox.querySelector('.bottle-render') && !heroBox.querySelector('.render')) {
+      heroBox.insertAdjacentHTML('afterbegin', `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam"><use href="#packshot"/></svg>`);
+    }
+  }
+
+  if (photo || imgs[0]) {
+    heroBox.querySelectorAll('.botanical, .bottle-render, .render, .packshot-img').forEach(b => {
+      if (b !== photo) b.remove();
+    });
+  }
+
+  if (!imgs.length && !photo) return;
   let current = 0;
-  main.classList.add('zoomable');
-  main.addEventListener('click', () => LB.open(imgs, current));
+  heroBox.classList.add('zoomable');
+  heroBox.addEventListener('click', () => {
+    const list = imgs.length ? imgs : (photo ? [photo.src] : []);
+    if (list.length) LB.open(list, current);
+  });
   if (imgs.length < 2) return;
   const thumbs = document.getElementById('thumbs');
-  thumbs.hidden = false;
-  thumbs.innerHTML = imgs.slice(0, 5).map((s, i) => `<button type="button" class="${i ? '' : 'active'}" data-i="${i}" aria-label="Ảnh ${i + 1}"><img src="${esc(s)}" alt="" loading="lazy"></button>`).join('');
-  thumbs.addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    current = +b.dataset.i; photo.src = imgs[current];
-    thumbs.querySelectorAll('button').forEach(t => t.classList.toggle('active', t === b));
-  });
+  if (thumbs) {
+    thumbs.hidden = false;
+    thumbs.innerHTML = imgs.slice(0, 5).map((s, i) => `<button type="button" class="${i ? '' : 'active'}" data-i="${i}" aria-label="Ảnh ${i + 1}"><img src="${esc(s)}" alt="" loading="lazy"></button>`).join('');
+    thumbs.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      current = +b.dataset.i;
+      if (photo) photo.src = imgs[current];
+      thumbs.querySelectorAll('button').forEach(t => t.classList.toggle('active', t === b));
+    });
+  }
 })();
 
 /* Công dụng: đổi ảnh theo vùng */
 (() => {
   const box = document.querySelector('[data-visual="usage"]'), zones = document.getElementById('zones');
+  if (!box || !zones) return;
   const imgs = CONFIG.productImages.filter(Boolean);
   const fallback = CONFIG.usageImage || imgs[1] || imgs[0] || '';
   const buttons = [...zones.querySelectorAll('button')];
   const show = i => {
     const label = buttons[i].textContent.trim(), own = (CONFIG.zoneImages || [])[i], src = own || fallback;
-    box.querySelectorAll('.photo, .render, .zone-badge').forEach(e => e.remove());
+    box.querySelectorAll('.photo, .render, .zone-badge, .usage-packshot-img, .bottle-render, .botanical').forEach(e => e.remove());
     box.insertAdjacentHTML('afterbegin', src
       ? `<img class="photo" src="${esc(src)}" alt="Xịt khử mùi Mây Mây – ${esc(label)}">`
       : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
-    box.querySelectorAll('.botanical').forEach(b => b.hidden = !!src);
     if (!own && CONFIG.showPlaceholders) {
       markPreview();
       box.insertAdjacentHTML('beforeend', `<span class="ph-badge zone-badge">Chờ ảnh: ${esc(label)}</span>`);
@@ -185,26 +204,27 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 /* Video reviews */
 (() => {
   const sec = document.getElementById('video-review'), row = document.getElementById('vidRow');
-  const vids = CONFIG.videos.filter(v => v && v.url).map(v => ({ ...v, ...parseVideo(v.url.trim()) }));
-  if (!vids.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
+  if (!sec || !row) return;
+  const vids = (CONFIG.videos || []).filter(v => v && v.url).map(v => ({ ...v, ...parseVideo(v.url.trim()) }));
   if (!vids.length) {
-    markPreview();
-    row.innerHTML = [1, 2, 3, 4].map(i => `<div class="vid-card is-ph"><span class="ph-badge">Chờ nội dung</span><span class="vid-play">${PLAY}</span><span class="vid-meta"><b>Video review ${i}</b><span>TikTok, YouTube hoặc file .mp4</span></span></div>`).join('');
-  } else {
-    row.innerHTML = vids.map((v, i) => {
-      const poster = v.poster || v.thumb;
-      const media = poster ? `<img src="${esc(poster)}" alt="" loading="lazy">`
-        : v.type === 'file' ? `<video src="${esc(v.src)}#t=0.5" muted playsinline preload="metadata"></video>` : '';
-      return `<button type="button" class="vid-card" data-i="${i}" aria-label="Xem video ${esc(v.title || i + 1)}">${media}<span class="vid-play">${PLAY}</span><span class="vid-meta">${v.title ? `<b>${esc(v.title)}</b>` : ''}${v.author ? `<span>${esc(v.author)}</span>` : ''}</span></button>`;
-    }).join('');
-    row.addEventListener('click', e => { const c = e.target.closest('.vid-card'); if (c) VM.open(vids[+c.dataset.i]); });
+    sec.remove();
+    return;
   }
+  row.innerHTML = vids.map((v, i) => {
+    const poster = v.poster || v.thumb;
+    const media = poster ? `<img src="${esc(poster)}" alt="" loading="lazy">`
+      : v.type === 'file' ? `<video src="${esc(v.src)}#t=0.5" muted playsinline preload="metadata"></video>` : '';
+    return `<button type="button" class="vid-card" data-i="${i}" aria-label="Xem video ${esc(v.title || i + 1)}">${media}<span class="vid-play">${PLAY}</span><span class="vid-meta">${v.title ? `<b>${esc(v.title)}</b>` : ''}${v.author ? `<span>${esc(v.author)}</span>` : ''}</span></button>`;
+  }).join('');
+  row.addEventListener('click', e => { const c = e.target.closest('.vid-card'); if (c) VM.open(vids[+c.dataset.i]); });
   const arrows = document.getElementById('vidArrows');
-  if (row.children.length <= 4) arrows.remove();
-  else arrows.addEventListener('click', e => {
-    const b = e.target.closest('button'); if (!b) return;
-    row.scrollBy({ left: +b.dataset.dir * (row.firstElementChild.offsetWidth + 16), behavior: 'smooth' });
-  });
+  if (arrows) {
+    if (row.children.length <= 4) arrows.remove();
+    else arrows.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      row.scrollBy({ left: +b.dataset.dir * (row.firstElementChild.offsetWidth + 16), behavior: 'smooth' });
+    });
+  }
 })();
 
 /* Customer reviews */

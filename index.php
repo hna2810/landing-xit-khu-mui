@@ -14,9 +14,6 @@ get_header();
 // 1. Hero Section
 get_template_part('template-parts/hero');
 
-// 2. Proof Strip
-get_template_part('template-parts/strip');
-
 // 3. Pain Points
 get_template_part('template-parts/pain');
 

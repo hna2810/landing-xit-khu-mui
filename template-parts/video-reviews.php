@@ -8,6 +8,22 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+$video_items = lx_get_field('lx_video_reviews', 'option', array());
+$has_videos = false;
+if (!empty($video_items) && is_array($video_items)) {
+    foreach ($video_items as $v) {
+        if (!empty($v['url'])) {
+            $has_videos = true;
+            break;
+        }
+    }
+}
+
+// Ẩn tạm đi khi chưa có video, khi nào nhập video sẽ hiển thị cả section
+if (!$has_videos) {
+    return;
+}
 ?>
 <!-- VIDEO REVIEW -->
 <section class="section videos-sec panel" id="video-review">

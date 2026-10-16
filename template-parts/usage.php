@@ -22,16 +22,16 @@ $z4_img = lx_get_image_url('lx_zone_4_image', '');
 <section class="section benefits panel" id="cong-dung">
   <div class="container">
     <div class="benefit-visual reveal">
-      <div class="packshot" data-visual="usage" style="position:relative; display:flex; align-items:center; justify-content:center;">
+      <div class="packshot" data-visual="usage">
         <?php if (!empty($usage_img)) : ?>
-          <img src="<?php echo $usage_img; ?>" alt="Công dụng Xịt khử mùi Mây Mây" class="usage-packshot-img" style="max-height:85%; max-width:85%; object-fit:contain; z-index:2; position:relative; pointer-events:none; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.12));">
+          <img class="photo" src="<?php echo esc_url($usage_img); ?>" alt="Công dụng Xịt khử mùi Mây Mây">
         <?php else : ?>
           <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
             <use href="#bottle-shape"/>
           </svg>
+          <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
+          <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-ginger"/></svg>
         <?php endif; ?>
-        <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
-        <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-ginger"/></svg>
       </div>
       <div class="zones" id="zones" role="tablist" aria-label="Vùng sử dụng">
         <button type="button" role="tab" data-zone="0" <?php echo !empty($z1_img) ? 'data-img="' . $z1_img . '"' : ''; ?>>Vùng nách</button>

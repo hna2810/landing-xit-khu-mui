@@ -43,16 +43,16 @@ $hero_gallery = lx_get_field('lx_hero_gallery', 'option', array());
       </div>
     </div>
     <div class="gallery reveal">
-      <div class="packshot" data-visual="hero" style="position:relative; display:flex; align-items:center; justify-content:center;">
+      <div class="packshot" data-visual="hero">
         <?php if (!empty($product_img)) : ?>
-          <img src="<?php echo $product_img; ?>" alt="<?php echo $hero_badge; ?>" class="packshot-img" style="max-height:85%; max-width:85%; object-fit:contain; z-index:2; position:relative; pointer-events:none; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.12));">
+          <img class="photo" src="<?php echo esc_url($product_img); ?>" alt="<?php echo esc_attr($hero_badge); ?>">
         <?php else : ?>
-          <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
+          <svg class="bottle-render" viewBox="0 0 160 380" aria-label="<?php echo esc_attr($hero_badge); ?>" style="width:58%; max-height:88%; z-index:2; position:relative;">
             <use href="#bottle-shape"/>
           </svg>
+          <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
+          <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-orange"/></svg>
         <?php endif; ?>
-        <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>
-        <svg class="botanical b2" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-orange"/></svg>
       </div>
       <div class="thumbs" id="thumbs" <?php echo empty($hero_gallery) ? 'hidden' : ''; ?>>
         <?php if (!empty($hero_gallery) && is_array($hero_gallery)) : ?>
