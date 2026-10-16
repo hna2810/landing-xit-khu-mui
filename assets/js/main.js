@@ -1,0 +1,464 @@
+/* =========================================================
+   CẤU HÌNH – chỉ cần sửa ở đây
+   ========================================================= */
+const CONFIG = {
+  // true = hiện khung chờ ở các phần chưa có nội dung (để xem bố cục).
+  // Đổi thành false trước khi chạy quảng cáo: phần nào chưa có nội dung sẽ tự ẩn.
+  showPlaceholders: true,
+
+  // Ảnh sản phẩm: ảnh đầu tiên là ảnh chính ở đầu trang, các ảnh sau hiện thành ảnh nhỏ để chuyển.
+  productImages: [
+    // 'https://.../packshot.jpg',
+  ],
+  // Ảnh lifestyle mặc định cho phần "Công dụng" (để trống = dùng ảnh sản phẩm thứ 2 hoặc ảnh render)
+  usageImage: '',
+  // Ảnh cho từng nút vùng ở phần "Công dụng", theo thứ tự: Vùng nách, Vùng chân, Cơ thể, Vùng tiểu EVA
+  zoneImages: ['', '', '', ''],
+
+  // Ảnh 3:4 cho 4 thẻ nỗi lo, theo thứ tự: Hôi nách, Hôi chân, Mùi cơ thể, Bà đẻ sau sinh
+  problemImages: ['', '', '', ''],
+
+  // Ảnh minh hoạ trong khung tròn thành phần (ảnh vuông), theo thứ tự: Bạc hà, Trầu không, Gừng, Cam
+  ingredientImages: ['', '', '', ''],
+
+  // Ảnh minh hoạ cho 3 bước sử dụng (dọc 4:5), theo thứ tự: Lắc nhẹ, Xịt lên da, Để khô
+  stepImages: ['', '', ''],
+
+  // Ảnh sản phẩm cạnh form đặt hàng (ngang 16:10). Để trống = dùng ảnh sản phẩm đầu tiên hoặc ảnh render.
+  orderImage: '',
+
+  // Video review: YouTube (watch / shorts / youtu.be), TikTok (link có /video/123...), hoặc file .mp4
+  videos: [
+    // { url: 'https://www.tiktok.com/@ten/video/1234567890', title: 'Review sau 1 tuần dùng', author: '@ten_tiktok', poster: '' },
+  ],
+
+  // Đánh giá khách hàng THẬT. Điểm trung bình và biểu đồ sao được tính tự động từ danh sách này.
+  reviews: [
+    // { name: 'Chị Lan', location: 'Hà Nội', date: '12/10/2026', rating: 5, tag: 'Mẹ sau sinh',
+    //   content: 'Nội dung khách viết...', images: ['https://.../anh1.jpg'], avatar: '', verified: true },
+  ],
+
+  // Ảnh chụp tin nhắn / feedback khách gửi về
+  feedbackImages: [],
+
+  // Ảnh giấy công bố, chứng nhận, kiểm nghiệm
+  certificateImages: [],
+
+  // Cam kết hiển thị ở phần "Yên tâm khi chọn Mây Mây". icon: doc | leaf | truck | phone | shield | badge
+  commitments: [
+    { icon: 'doc', title: 'Đã công bố mỹ phẩm', text: 'Số công bố 60/26/CBMP-NB.' },
+    { icon: 'leaf', title: 'Thảo mộc thuần chay', text: 'Bạc hà, trầu không, gừng và cam.' },
+    { icon: 'truck', title: 'Freeship toàn quốc', text: 'Miễn phí vận chuyển trên toàn quốc.' },
+    { icon: 'phone', title: 'Xác nhận trước khi giao', text: 'Mây Mây gọi điện xác nhận thông tin đơn hàng trước khi giao.' }
+  ],
+
+  // Endpoint nhận đơn (Google Apps Script Web App, webhook...). Để trống = chỉ hiện thông báo thành công.
+  orderEndpoint: '',
+  price: 49000,
+  listPrice: 89000,
+  packages: [
+    { qty: 1, name: '1 chai 30ml' },
+    { qty: 2, name: '2 chai 30ml' },
+    { qty: 3, name: '3 chai 30ml' }
+  ]
+};
+
+const fmt = n => n.toLocaleString('vi-VN') + 'đ';
+
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const STAR = '<svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>';
+const PLAY = '<svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>';
+const stars = r => `<span class="stars" role="img" aria-label="${(r || 0).toFixed(1)} trên 5 sao"><span class="stars-base">${STAR.repeat(5)}</span><span class="stars-fill" style="width:${(r || 0) / 5 * 100}%">${STAR.repeat(5)}</span></span>`;
+const ICONS = { doc: 'i-doc', leaf: 'i-leaf', truck: 'i-truck', phone: 'i-phone', shield: 'i-shield', badge: 'i-badge' };
+
+let previewShown = false;
+const markPreview = () => {
+  if (previewShown) return;
+  previewShown = true;
+  document.body.insertAdjacentHTML('beforeend', '<div class="preview-pill"><b>Bản xem trước.</b> Các khung "Chờ nội dung" sẽ được thay bằng ảnh, video, đánh giá thật.</div>');
+};
+
+/* Lightbox (ảnh) */
+const LB = (() => {
+  const el = document.getElementById('lightbox'), img = el.querySelector('img'), count = el.querySelector('.lb-count');
+  let list = [], i = 0;
+  const show = () => {
+    img.src = list[i];
+    count.textContent = list.length > 1 ? `${i + 1} / ${list.length}` : '';
+    el.querySelectorAll('.lb-prev, .lb-next').forEach(b => b.hidden = list.length < 2);
+  };
+  const close = () => { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+  const step = d => { i = (i + d + list.length) % list.length; show(); };
+  el.addEventListener('click', e => {
+    if (e.target.closest('.lb-prev')) return step(-1);
+    if (e.target.closest('.lb-next')) return step(1);
+    if (e.target !== img) close();
+  });
+  document.addEventListener('keydown', e => {
+    if (!el.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') step(-1);
+    if (e.key === 'ArrowRight') step(1);
+  });
+  return {
+    open(l, idx = 0) {
+      list = l; i = idx; show();
+      el.classList.add('open'); el.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    }
+  };
+})();
+
+/* Video modal */
+const parseVideo = url => {
+  let m;
+  if ((m = url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/))) return { type: 'yt', id: m[1], vertical: /shorts\//.test(url), thumb: `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg` };
+  if ((m = url.match(/tiktok\.com\/.*video\/(\d+)/))) return { type: 'tt', id: m[1], vertical: true };
+  return { type: 'file', src: url, vertical: true };
+};
+const VM = (() => {
+  const el = document.getElementById('vmodal'), box = el.querySelector('.modal-inner');
+  const close = () => { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); box.innerHTML = ''; document.body.style.overflow = ''; };
+  el.addEventListener('click', e => { if (!e.target.closest('.modal-inner')) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && el.classList.contains('open')) close(); });
+  return {
+    open(v) {
+      box.className = 'modal-inner' + (v.vertical ? '' : ' wide');
+      box.innerHTML = v.type === 'yt'
+        ? `<iframe src="https://www.youtube.com/embed/${v.id}?autoplay=1&rel=0&playsinline=1" title="Video review Mây Mây" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`
+        : v.type === 'tt'
+          ? `<iframe src="https://www.tiktok.com/embed/v2/${v.id}" title="Video review Mây Mây" allow="autoplay; encrypted-media" allowfullscreen></iframe>`
+          : `<video src="${esc(v.src)}" controls autoplay playsinline></video>`;
+      el.classList.add('open'); el.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+    }
+  };
+})();
+
+/* Product visuals + hero gallery */
+(() => {
+  const imgs = CONFIG.productImages.filter(Boolean);
+  const heroBox = document.querySelector('[data-visual="hero"]');
+  heroBox.insertAdjacentHTML('afterbegin', imgs[0]
+    ? `<img class="photo" src="${esc(imgs[0])}" alt="Xịt khử mùi Gừng Cam Mây Mây 30ml">`
+    : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
+  if (imgs[0]) heroBox.querySelectorAll('.botanical').forEach(b => b.remove());
+  if (!imgs.length) return;
+  const main = document.querySelector('[data-visual="hero"]'), photo = main.querySelector('img.photo');
+  let current = 0;
+  main.classList.add('zoomable');
+  main.addEventListener('click', () => LB.open(imgs, current));
+  if (imgs.length < 2) return;
+  const thumbs = document.getElementById('thumbs');
+  thumbs.hidden = false;
+  thumbs.innerHTML = imgs.slice(0, 5).map((s, i) => `<button type="button" class="${i ? '' : 'active'}" data-i="${i}" aria-label="Ảnh ${i + 1}"><img src="${esc(s)}" alt="" loading="lazy"></button>`).join('');
+  thumbs.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    current = +b.dataset.i; photo.src = imgs[current];
+    thumbs.querySelectorAll('button').forEach(t => t.classList.toggle('active', t === b));
+  });
+})();
+
+/* Công dụng: đổi ảnh theo vùng */
+(() => {
+  const box = document.querySelector('[data-visual="usage"]'), zones = document.getElementById('zones');
+  const imgs = CONFIG.productImages.filter(Boolean);
+  const fallback = CONFIG.usageImage || imgs[1] || imgs[0] || '';
+  const buttons = [...zones.querySelectorAll('button')];
+  const show = i => {
+    const label = buttons[i].textContent.trim(), own = (CONFIG.zoneImages || [])[i], src = own || fallback;
+    box.querySelectorAll('.photo, .render, .zone-badge').forEach(e => e.remove());
+    box.insertAdjacentHTML('afterbegin', src
+      ? `<img class="photo" src="${esc(src)}" alt="Xịt khử mùi Mây Mây – ${esc(label)}">`
+      : `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
+    box.querySelectorAll('.botanical').forEach(b => b.hidden = !!src);
+    if (!own && CONFIG.showPlaceholders) {
+      markPreview();
+      box.insertAdjacentHTML('beforeend', `<span class="ph-badge zone-badge">Chờ ảnh: ${esc(label)}</span>`);
+    }
+    buttons.forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
+  };
+  zones.addEventListener('click', e => { const b = e.target.closest('button'); if (b) show(+b.dataset.zone); });
+  show(0);
+})();
+
+/* Ảnh thẻ nỗi lo (3:4) */
+document.querySelectorAll('[data-problem]').forEach(el => {
+  const i = +el.dataset.problem, src = (CONFIG.problemImages || [])[i], title = el.parentElement.querySelector('h3').textContent;
+  if (src) el.innerHTML = `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`;
+  else if (CONFIG.showPlaceholders) { markPreview(); el.innerHTML = `<div class="ph"><span class="ph-badge">Chờ nội dung</span>Ảnh 3:4<br>${esc(title)}</div>`; }
+  else el.remove();
+});
+
+/* Ảnh 3 bước sử dụng */
+document.querySelectorAll('[data-step]').forEach(el => {
+  const src = (CONFIG.stepImages || [])[+el.dataset.step], title = el.parentElement.querySelector('h3').textContent;
+  if (src) el.insertAdjacentHTML('afterbegin', `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`);
+  else if (CONFIG.showPlaceholders) { markPreview(); el.insertAdjacentHTML('afterbegin', `<div class="ph"><span class="ph-badge">Chờ nội dung</span>Ảnh 4:5<br>${esc(title)}</div>`); }
+  else el.style.aspectRatio = 'auto', el.style.height = '76px', el.style.background = 'transparent';
+});
+
+/* Ảnh sản phẩm cạnh form đặt hàng */
+(() => {
+  const el = document.getElementById('orderVisual');
+  const src = CONFIG.orderImage || CONFIG.productImages.filter(Boolean)[0];
+  if (src) {
+    el.querySelectorAll('.botanical').forEach(b => b.remove());
+    el.insertAdjacentHTML('afterbegin', `<img src="${esc(src)}" alt="Xịt khử mùi Gừng Cam Mây Mây 30ml" loading="lazy">`);
+  } else {
+    el.insertAdjacentHTML('afterbegin', `<svg class="render" viewBox="0 0 240 560" role="img" aria-label="Xịt khử mùi Gừng Cam Mây Mây 30ml"><use href="#packshot"/></svg>`);
+  }
+})();
+
+/* Ảnh minh hoạ thành phần (khung tròn) */
+document.querySelectorAll('[data-ing]').forEach(el => {
+  const src = (CONFIG.ingredientImages || [])[+el.dataset.ing];
+  if (src) el.innerHTML = `<img src="${esc(src)}" alt="${esc(el.parentElement.querySelector('h3').textContent)}" loading="lazy">`;
+});
+
+/* Video reviews */
+(() => {
+  const sec = document.getElementById('video-review'), row = document.getElementById('vidRow');
+  const vids = CONFIG.videos.filter(v => v && v.url).map(v => ({ ...v, ...parseVideo(v.url.trim()) }));
+  if (!vids.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
+  if (!vids.length) {
+    markPreview();
+    row.innerHTML = [1, 2, 3, 4].map(i => `<div class="vid-card is-ph"><span class="ph-badge">Chờ nội dung</span><span class="vid-play">${PLAY}</span><span class="vid-meta"><b>Video review ${i}</b><span>TikTok, YouTube hoặc file .mp4</span></span></div>`).join('');
+  } else {
+    row.innerHTML = vids.map((v, i) => {
+      const poster = v.poster || v.thumb;
+      const media = poster ? `<img src="${esc(poster)}" alt="" loading="lazy">`
+        : v.type === 'file' ? `<video src="${esc(v.src)}#t=0.5" muted playsinline preload="metadata"></video>` : '';
+      return `<button type="button" class="vid-card" data-i="${i}" aria-label="Xem video ${esc(v.title || i + 1)}">${media}<span class="vid-play">${PLAY}</span><span class="vid-meta">${v.title ? `<b>${esc(v.title)}</b>` : ''}${v.author ? `<span>${esc(v.author)}</span>` : ''}</span></button>`;
+    }).join('');
+    row.addEventListener('click', e => { const c = e.target.closest('.vid-card'); if (c) VM.open(vids[+c.dataset.i]); });
+  }
+  const arrows = document.getElementById('vidArrows');
+  if (row.children.length <= 4) arrows.remove();
+  else arrows.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    row.scrollBy({ left: +b.dataset.dir * (row.firstElementChild.offsetWidth + 16), behavior: 'smooth' });
+  });
+})();
+
+/* Customer reviews */
+(() => {
+  const sec = document.getElementById('danh-gia');
+  const reviews = CONFIG.reviews.filter(r => r && r.content).map(r => ({ ...r, rating: Math.min(5, Math.max(1, +r.rating || 5)), images: (r.images || []).filter(Boolean) }));
+  if (!reviews.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
+  const summary = document.getElementById('summary'), list = document.getElementById('reviewList');
+  const filtersEl = document.getElementById('filters'), more = document.getElementById('moreReviews');
+  const dist = () => [5, 4, 3, 2, 1].map(n => {
+    const c = reviews.filter(r => r.rating === n).length, pct = reviews.length ? c / reviews.length * 100 : 0;
+    return `<div class="dist-row"><span>${n} sao</span><span class="bar"><i style="width:${pct}%"></i></span><span>${c}</span></div>`;
+  }).join('');
+
+  if (!reviews.length) {
+    markPreview();
+    summary.innerHTML = `<div class="avg">–</div>${stars(0)}<p class="avg-sub">Điểm trung bình tự tính từ đánh giá thật của khách hàng.</p><div class="dist">${dist()}</div>`;
+    list.innerHTML = [1, 2, 3, 4].map(() => `<article class="review is-ph"><span class="ph-badge">Chờ nội dung</span><div class="review-head" style="margin-top:18px"><span class="avatar"></span><div style="flex:1"><div class="sk" style="width:45%;margin:0"></div><div class="sk" style="width:28%"></div></div></div>${stars(0)}<div class="sk" style="margin-top:16px"></div><div class="sk"></div><div class="sk" style="width:65%"></div></article>`).join('');
+    filtersEl.remove(); more.remove();
+    return;
+  }
+
+  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+  const avgTxt = avg.toFixed(1).replace('.', ',');
+  summary.innerHTML = `<div class="avg">${avgTxt}</div>${stars(avg)}<p class="avg-sub">Dựa trên ${reviews.length} đánh giá</p><div class="dist">${dist()}</div>`;
+  const ratingLine = `${stars(avg)}<span><b>${avgTxt}/5</b> · ${reviews.length} đánh giá</span>`;
+  const hero = document.getElementById('heroRating'), form = document.getElementById('formRating');
+  hero.innerHTML = ratingLine; hero.hidden = false;
+  form.innerHTML = ratingLine; form.hidden = false;
+
+  const FILTERS = [
+    ['all', 'Tất cả', () => true],
+    ['img', 'Có hình ảnh', r => r.images.length > 0],
+    ['5', '5 sao', r => r.rating === 5],
+    ['4', '4 sao', r => r.rating === 4]
+  ].map(([k, label, fn]) => ({ k, label, fn, n: reviews.filter(fn).length })).filter(f => f.k === 'all' || f.n > 0);
+  filtersEl.innerHTML = FILTERS.map((f, i) => `<button type="button" class="chip${i ? '' : ' active'}" data-k="${f.k}">${f.label} (${f.n})</button>`).join('');
+
+  const PAGE = 6;
+  let active = FILTERS[0], shown = PAGE;
+  const card = (r, idx) => {
+    const initial = esc(((r.name || 'K').trim().split(/\s+/).pop() || 'K')[0].toUpperCase());
+    return `<article class="review" data-r="${idx}">
+      <div class="review-head"><span class="avatar">${r.avatar ? `<img src="${esc(r.avatar)}" alt="">` : initial}</span>
+      <div><div class="review-name">${esc(r.name || 'Khách hàng')}</div><div class="review-sub">${[r.location, r.date].filter(Boolean).map(esc).join(' · ')}</div></div></div>
+      <div class="review-rate">${stars(r.rating)}${r.verified !== false ? `<span class="verified"><svg class="icon"><use href="#i-check"/></svg>Đã mua hàng</span>` : ''}</div>
+      <p class="review-text">${esc(r.content)}</p>
+      ${r.images.length ? `<div class="review-imgs">${r.images.map((s, j) => `<button type="button" data-img="${j}" aria-label="Xem ảnh"><img src="${esc(s)}" alt="Ảnh từ khách hàng" loading="lazy"></button>`).join('')}</div>` : ''}
+      ${r.tag ? `<span class="review-tag">${esc(r.tag)}</span>` : ''}
+    </article>`;
+  };
+  const render = () => {
+    const items = reviews.map((r, i) => [r, i]).filter(([r]) => active.fn(r));
+    list.innerHTML = items.slice(0, shown).map(([r, i]) => card(r, i)).join('');
+    more.hidden = items.length <= shown;
+  };
+  filtersEl.addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    active = FILTERS.find(f => f.k === b.dataset.k); shown = PAGE;
+    filtersEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c === b));
+    render();
+  });
+  more.addEventListener('click', () => { shown += PAGE; render(); });
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-img]'); if (!b) return;
+    LB.open(reviews[+b.closest('.review').dataset.r].images, +b.dataset.img);
+  });
+  render();
+})();
+
+/* Feedback screenshots */
+(() => {
+  const sec = document.getElementById('feedback'), grid = document.getElementById('fbGrid');
+  const imgs = CONFIG.feedbackImages.filter(Boolean);
+  if (!imgs.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
+  if (!imgs.length) {
+    markPreview();
+    const ratios = ['3 / 5', '3 / 4', '1 / 1', '3 / 4.4'];
+    grid.innerHTML = Array.from({ length: 8 }, (_, i) => `<div class="ph" style="aspect-ratio:${ratios[i % 4]}"><span class="ph-badge">Chờ nội dung</span>Ảnh feedback ${i + 1}</div>`).join('');
+    return;
+  }
+  grid.innerHTML = imgs.map((s, i) => `<button type="button" data-i="${i}" aria-label="Xem feedback ${i + 1}"><img src="${esc(s)}" alt="Feedback khách hàng ${i + 1}" loading="lazy"></button>`).join('');
+  grid.addEventListener('click', e => { const b = e.target.closest('button'); if (b) LB.open(imgs, +b.dataset.i); });
+})();
+
+/* Trust & certificates */
+(() => {
+  document.getElementById('trustGrid').innerHTML = CONFIG.commitments.map(c => `
+    <div class="trust-item reveal"><svg class="icon"><use href="#${ICONS[c.icon] || 'i-check'}"/></svg><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p></div>`).join('');
+  const certs = document.getElementById('certs'), imgs = CONFIG.certificateImages.filter(Boolean);
+  if (imgs.length) {
+    certs.innerHTML = imgs.map((s, i) => `<button type="button" data-i="${i}" aria-label="Xem chứng nhận ${i + 1}"><img src="${esc(s)}" alt="Giấy công bố / chứng nhận ${i + 1}" loading="lazy"></button>`).join('');
+    certs.addEventListener('click', e => { const b = e.target.closest('button'); if (b) LB.open(imgs, +b.dataset.i); });
+  } else if (CONFIG.showPlaceholders) {
+    markPreview();
+    certs.innerHTML = ['Giấy công bố mỹ phẩm', 'Phiếu kiểm nghiệm', 'Chứng nhận khác'].map(t => `<div class="ph"><span class="ph-badge">Chờ nội dung</span>${t}</div>`).join('');
+  } else certs.remove();
+})();
+
+/* Countdown – flash sale theo ngày */
+(() => {
+  const el = document.getElementById('timer');
+  const pad = n => String(n).padStart(2, '0');
+  const tick = () => {
+    const now = new Date(), end = new Date(now); end.setHours(23, 59, 59, 999);
+    const d = Math.max(0, end - now);
+    el.textContent = `${pad(Math.floor(d / 3.6e6))}:${pad(Math.floor(d / 6e4) % 60)}:${pad(Math.floor(d / 1e3) % 60)}`;
+  };
+  tick(); setInterval(tick, 1000);
+})();
+
+/* Packages */
+(() => {
+  const wrap = document.getElementById('packages');
+  wrap.innerHTML = CONFIG.packages.map((p, i) => `
+    <label class="pkg${i === 0 ? ' active' : ''}">
+      <input type="radio" name="package" value="${p.qty}"${i === 0 ? ' checked' : ''}>
+      <span class="dot"></span>
+      <span class="pkg-name">${p.name}</span>
+      <span class="pkg-price">${fmt(p.qty * CONFIG.price)}<s>${fmt(p.qty * CONFIG.listPrice)}</s></span>
+    </label>`).join('');
+  const total = document.getElementById('total');
+  wrap.addEventListener('change', e => {
+    wrap.querySelectorAll('.pkg').forEach(o => o.classList.toggle('active', o.contains(e.target)));
+    total.textContent = fmt(+e.target.value * CONFIG.price);
+  });
+})();
+
+/* Order form */
+(() => {
+  const form = document.getElementById('orderForm');
+  const rules = {
+    fName: v => v.trim().length >= 2,
+    fPhone: v => /^0\d{9}$/.test(v.replace(/[\s.-]/g, '')),
+    fAddress: v => v.trim().length >= 8
+  };
+  const check = id => {
+    const el = document.getElementById(id), ok = rules[id](el.value);
+    el.closest('.field').classList.toggle('invalid', !ok);
+    return ok;
+  };
+  Object.keys(rules).forEach(id => document.getElementById(id).addEventListener('input', () => {
+    if (document.getElementById(id).closest('.field').classList.contains('invalid')) check(id);
+  }));
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (Object.keys(rules).map(check).includes(false)) {
+      form.querySelector('.invalid input, .invalid textarea').focus();
+      return;
+    }
+    const f = form.elements;
+    const qty = +f.package.value;
+    const data = {
+      name: f.name.value.trim(),
+      phone: f.phone.value.replace(/[\s.-]/g, ''),
+      address: f.address.value.trim(),
+      product: 'Xịt Khử Mùi Gừng Cam Mây Mây 30ml',
+      quantity: qty,
+      total: qty * CONFIG.price,
+      source: location.href,
+      time: new Date().toISOString()
+    };
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true; btn.textContent = 'Đang gửi...';
+    if (CONFIG.orderEndpoint) {
+      try {
+        await fetch(CONFIG.orderEndpoint, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+      } catch (err) { console.error('Gửi đơn thất bại', err); }
+    }
+    // if (window.fbq) fbq('track', 'Purchase', { value: data.total, currency: 'VND' });
+    // if (window.ttq) ttq.track('PlaceAnOrder', { value: data.total, currency: 'VND' });
+    document.getElementById('sName').textContent = data.name;
+    document.getElementById('sPhone').textContent = data.phone;
+    document.getElementById('formContent').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+  });
+})();
+
+/* FAQ */
+(() => {
+  const faqs = [
+    ['Xịt khử mùi Mây Mây dùng được cho những vùng nào?', 'Sản phẩm dùng để chăm sóc mùi vùng nách, vùng chân và cơ thể; đồng thời có thể xịt khử mùi vùng tiểu EVA sau sinh. Không xịt vào mắt, niêm mạc hoặc vùng da tổn thương.'],
+    ['Sau khi xịt bao lâu thì khô?', 'Sản phẩm khô thoáng khoảng 30 giây. Bạn chỉ cần để da khô tự nhiên rồi mặc quần áo.'],
+    ['Thành phần của sản phẩm là gì?', 'Thành phần thảo mộc thuần chay từ bạc hà, trầu không, gừng và cam, cho hương thảo mộc thanh mát, dễ chịu.'],
+    ['Cách sử dụng như thế nào?', 'Bước 1: Lắc nhẹ chai xịt. Bước 2: Xịt lên vùng da, cách khoảng 10 – 15cm. Bước 3: Để da khô tự nhiên sau đó mặc quần áo.'],
+    ['Giá bán và phí vận chuyển?', 'Chương trình flash sale: 49.000đ/chai 30ml (giá niêm yết 89.000đ), freeship toàn quốc.'],
+    ['Hạn sử dụng và cách bảo quản?', 'Hạn sử dụng 02 năm. Bảo quản nơi khô thoáng, tránh ánh nắng trực tiếp.'],
+    ['Đặt hàng xong thì sao?', 'Sau khi bạn điền form, Mây Mây sẽ liên hệ qua số điện thoại để xác nhận đơn. Vui lòng kiểm tra kỹ họ tên, số điện thoại và địa chỉ nhận hàng trước khi xác nhận.']
+  ];
+  const list = document.getElementById('faq');
+  list.innerHTML = faqs.map(([q, a]) => `
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">${q}<span class="pm" aria-hidden="true"></span></button>
+      <div class="faq-a"><p>${a}</p></div>
+    </div>`).join('');
+  list.addEventListener('click', e => {
+    const btn = e.target.closest('.faq-q'); if (!btn) return;
+    const item = btn.parentElement, a = item.querySelector('.faq-a');
+    const open = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open);
+    a.style.maxHeight = open ? a.scrollHeight + 'px' : 0;
+  });
+})();
+
+/* Reveal on scroll */
+(() => {
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => io.observe(el));
+})();
+
+/* Mobile sticky bar: hiện sau hero, ẩn khi tới form */
+(() => {
+  const sticky = document.getElementById('sticky');
+  let pastHero = false, atOrder = false;
+  const update = () => sticky.classList.toggle('show', pastHero && !atOrder);
+  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting; update(); }).observe(document.querySelector('.hero'));
+  new IntersectionObserver(([e]) => { atOrder = e.isIntersecting; update(); }, { threshold: 0.1 }).observe(document.getElementById('dat-hang'));
+})();
+
+document.getElementById('year').textContent = new Date().getFullYear();
