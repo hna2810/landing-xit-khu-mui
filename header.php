@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 <head>
 <meta charset="<?php bloginfo('charset'); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#fbdfc7">
+<meta name="theme-color" content="#ffa059">
 <?php wp_head(); ?>
 </head>
 <body <?php body_class('lx_landing_theme'); ?>>
@@ -76,8 +76,8 @@ if (!defined('ABSPATH')) {
       <circle cx="98" cy="398" r="13" fill="#ffc46b"/>
       <path d="M98 385v26M85 398h26M89 389l18 18M107 389l-18 18" stroke="#f39a2e" stroke-width="1.4"/>
       <path d="M124 404c-2-8 4-13 10-11 2-6 9-8 13-4 5-3 11 1 9 7 5 3 3 10-3 11-3 5-10 5-13 1-5 3-12 2-14-3z" fill="#d9a35c"/>
-      <path d="M146 386c2-6 6-9 11-9" stroke="#5e9a4a" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <rect x="50" y="446" width="140" height="20" fill="#3f8a4d"/>
+      <path d="M146 386c2-6 6-9 11-9" stroke="#ffa059" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <rect x="50" y="446" width="140" height="20" fill="#d85c18"/>
       <text x="120" y="459.5" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="8.2" font-weight="700" fill="#fff" letter-spacing=".8">THẢO MỘC THUẦN CHAY</text>
       <text x="120" y="490" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="10" font-weight="600" fill="#6b3a12">30ml</text>
     </symbol>

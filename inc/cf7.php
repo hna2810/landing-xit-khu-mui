@@ -43,7 +43,7 @@ function lx_ensure_cf7_form() {
         . '  [text your-note id:fNote class:input placeholder "Ví dụ: Giao giờ hành chính, gọi trước khi giao..."]' . "\n"
         . '</div>' . "\n"
         . '<div class="total-cf7" style="display:flex; justify-content:space-between; align-items:center; margin:16px 0; padding:12px 16px; background:#fff8f2; border-radius:12px; border:1px solid #ffd8b8;">' . "\n"
-        . '  <span><strong>Tổng thanh toán:</strong> <small style="display:block; color:#2e7d32;">Miễn phí vận chuyển toàn quốc</small></span>' . "\n"
+        . '  <span><strong>Tổng thanh toán:</strong> <small style="display:block; color:#d85c18;">Miễn phí vận chuyển toàn quốc</small></span>' . "\n"
         . '  <b id="cf7Total" style="font-size:22px; color:#d9531e;">49.000đ</b>' . "\n"
         . '</div>' . "\n"
         . '[submit class:btn class:btn-block id:submitBtn "Freeship toàn quốc – Đặt hàng ngay!"]' . "\n"
