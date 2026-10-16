@@ -259,6 +259,13 @@ function lx_enqueue_scripts() {
         'orderEndpoint'     => $sheet_url,
         'price'             => 49000,
         'listPrice'         => 89000,
+        'timer'             => array(
+            'enable'   => (function_exists('get_field') && get_field('lx_timer_enable', 'option') !== null && get_field('lx_timer_enable', 'option') !== '') ? (bool) get_field('lx_timer_enable', 'option') : true,
+            'title'    => lx_get_field('lx_timer_title', 'option', 'Flash sale kết thúc sau'),
+            'type'     => lx_get_field('lx_timer_type', 'option', 'hours'),
+            'hours'    => (float) lx_get_field('lx_timer_hours', 'option', 8),
+            'datetime' => lx_get_field('lx_timer_end_datetime', 'option', ''),
+        ),
         'packages'          => array(
             array('qty' => 1, 'name' => '1 chai 30ml', 'price' => 49000, 'oldPrice' => 89000, 'tag' => 'Tiết kiệm 45%'),
             array('qty' => 2, 'name' => 'Combo 2 chai 30ml', 'price' => 89000, 'oldPrice' => 178000, 'tag' => 'Bán chạy nhất · Tiết kiệm 50%'),

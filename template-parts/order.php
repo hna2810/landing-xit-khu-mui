@@ -22,15 +22,23 @@ $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', 'https://script.google.
       <p class="label reveal">Đặt hàng</p>
       <h2 class="display reveal d1">Đừng để nỗi lo mùi cơ thể làm bạn <em>thiếu tự tin.</em></h2>
       <p class="lead reveal d1">Chủ động chăm sóc bản thân mỗi ngày với Xịt Khử Mùi Gừng Cam Mây Mây.</p>
-      <div class="timer reveal d2"><span>Flash sale kết thúc sau</span><b id="timer">00:00:00</b></div>
-      <ul class="order-perks reveal d2">
-        <li><svg class="icon"><use href="#i-check"/></svg>Giá flash sale 49.000đ (niêm yết 89.000đ)</li>
-        <li><svg class="icon"><use href="#i-check"/></svg>Freeship toàn quốc</li>
-        <li><svg class="icon"><use href="#i-check"/></svg>Thảo mộc thuần chay, hương thanh mát</li>
-      </ul>
+      <?php
+      $timer_enable_val = function_exists('get_field') ? get_field('lx_timer_enable', 'option') : null;
+      $timer_enable     = ($timer_enable_val === null || $timer_enable_val === '') ? true : (bool) $timer_enable_val;
+      $timer_title      = lx_get_field('lx_timer_title', 'option', 'Flash sale kết thúc sau');
+      if (empty($timer_title)) {
+          $timer_title = 'Flash sale kết thúc sau';
+      }
+      ?>
+      <?php if ($timer_enable) : ?>
+        <div class="timer reveal d2" id="timerBlock">
+          <span id="timerTitle"><?php echo $timer_title; ?></span>
+          <b id="timer">00:00:00</b>
+        </div>
+      <?php endif; ?>
       <div class="order-visual reveal d3" id="orderVisual">
         <?php if (!empty($order_img)) : ?>
-          <img src="<?php echo esc_url($order_img); ?>" alt="Xịt Khử Mùi Gừng Cam Mây Mây" loading="lazy">
+          <img src="<?php echo $order_img; ?>" alt="Xịt Khử Mùi Gừng Cam Mây Mây" loading="lazy">
         <?php else : ?>
           <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
             <use href="#bottle-shape"/>

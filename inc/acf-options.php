@@ -520,11 +520,107 @@ function lx_register_acf_field_group() {
                 'library' => 'all',
             ),
 
-            // ── TAB 10: FORM & GOOGLE SHEET ──────────────────────────
+            // ── TAB 10: ĐẶT HÀNG & FLASH SALE ─────────────────────────
             array(
                 'key' => 'field_tab_form',
-                'label' => __('10. Form & Google Sheet', 'lx-landing'),
+                'label' => __('10. Đặt hàng & Flash Sale', 'lx-landing'),
                 'type' => 'tab',
+            ),
+            array(
+                'key' => 'field_lx_timer_enable',
+                'label' => __('Bật đồng hồ đếm ngược Flash Sale', 'lx-landing'),
+                'name' => 'lx_timer_enable',
+                'type' => 'true_false',
+                'instructions' => __('Bật hoặc tắt thanh đếm ngược thời gian ưu đãi phía trên ảnh sản phẩm.', 'lx-landing'),
+                'default_value' => 1,
+                'ui' => 1,
+            ),
+            array(
+                'key' => 'field_lx_timer_title',
+                'label' => __('Tiêu đề đồng hồ đếm ngược', 'lx-landing'),
+                'name' => 'lx_timer_title',
+                'type' => 'text',
+                'default_value' => 'Flash sale kết thúc sau',
+                'placeholder' => 'Flash sale kết thúc sau',
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_lx_timer_enable',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_lx_timer_type',
+                'label' => __('Cách tính thời gian đếm ngược', 'lx-landing'),
+                'name' => 'lx_timer_type',
+                'type' => 'select',
+                'choices' => array(
+                    'hours'    => __('Đếm ngược theo số giờ (Tự động lặp lại cho mỗi khách)', 'lx-landing'),
+                    'datetime' => __('Đếm ngược tới ngày & giờ cụ thể', 'lx-landing'),
+                    'daily'    => __('Đếm ngược tới hết ngày hôm nay (23:59:59)', 'lx-landing'),
+                ),
+                'default_value' => 'hours',
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_lx_timer_enable',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_lx_timer_hours',
+                'label' => __('Số giờ đếm ngược', 'lx-landing'),
+                'name' => 'lx_timer_hours',
+                'type' => 'number',
+                'instructions' => __('Nhập số giờ đếm ngược (VD: 2, 4, 6, 8, 12, 24 giờ). Đồng hồ sẽ đếm ngược liên tục trong số giờ này.', 'lx-landing'),
+                'default_value' => 8,
+                'min' => 0.5,
+                'max' => 168,
+                'step' => 0.5,
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_lx_timer_enable',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                        array(
+                            'field' => 'field_lx_timer_type',
+                            'operator' => '==',
+                            'value' => 'hours',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_lx_timer_end_datetime',
+                'label' => __('Thời điểm kết thúc (Ngày & Giờ)', 'lx-landing'),
+                'name' => 'lx_timer_end_datetime',
+                'type' => 'date_time_picker',
+                'instructions' => __('Chọn ngày giờ cụ thể kết thúc Flash sale (VD: 2026-10-31 23:59:59).', 'lx-landing'),
+                'display_format' => 'd/m/Y H:i:s',
+                'return_format' => 'Y-m-d H:i:s',
+                'first_day' => 1,
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_lx_timer_enable',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                        array(
+                            'field' => 'field_lx_timer_type',
+                            'operator' => '==',
+                            'value' => 'datetime',
+                        ),
+                    ),
+                ),
             ),
             array(
                 'key' => 'field_lx_sheet_endpoint',

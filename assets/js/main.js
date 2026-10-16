@@ -31,7 +31,8 @@ const CONFIG = {
     { qty: 1, name: '1 chai 30ml', price: 49000, oldPrice: 89000, tag: 'Tiết kiệm 45%' },
     { qty: 2, name: 'Combo 2 chai 30ml', price: 89000, oldPrice: 178000, tag: 'Bán chạy nhất · Tiết kiệm 50%' },
     { qty: 3, name: 'Combo 3 chai 30ml', price: 129000, oldPrice: 267000, tag: 'Tiết kiệm 52%' }
-  ]
+  ],
+  timer: WP_DATA.timer || null
 };
 
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
@@ -484,17 +485,67 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   }
 })();
 
-/* Countdown – flash sale theo ngày */
+/* Countdown – flash sale tùy chỉnh từ cấu hình hoặc ACF */
 (() => {
   const el = document.getElementById('timer');
   if (!el) return;
-  const pad = n => String(n).padStart(2, '0');
-  const tick = () => {
-    const now = new Date(), end = new Date(now); end.setHours(23, 59, 59, 999);
-    const d = Math.max(0, end - now);
-    el.textContent = `${pad(Math.floor(d / 3.6e6))}:${pad(Math.floor(d / 6e4) % 60)}:${pad(Math.floor(d / 1e3) % 60)}`;
+  const cfg = (CONFIG.timer && typeof CONFIG.timer === 'object') ? CONFIG.timer : {};
+  if (cfg.enable === false) {
+    const block = document.getElementById('timerBlock') || el.closest('.timer');
+    if (block) block.style.display = 'none';
+    return;
+  }
+  const titleEl = document.getElementById('timerTitle');
+  if (titleEl && cfg.title) {
+    titleEl.textContent = cfg.title;
+  }
+
+  const type = cfg.type || 'hours';
+  const hours = Math.max(0.1, parseFloat(cfg.hours) || 8);
+  const targetDateStr = cfg.datetime || '';
+
+  const getEndTime = () => {
+    if (type === 'datetime' && targetDateStr) {
+      const parsed = new Date(String(targetDateStr).replace(/-/g, '/')).getTime();
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    if (type === 'daily') {
+      const end = new Date();
+      end.setHours(23, 59, 59, 999);
+      return end.getTime();
+    }
+    // Mặc định 'hours': lưu vào localStorage để giữ đồng hồ nhất quán mỗi khi khách tải lại trang
+    const storageKey = 'lx_flash_end_' + hours;
+    const now = Date.now();
+    const durationMs = hours * 3600 * 1000;
+    let stored = 0;
+    try { stored = parseInt(localStorage.getItem(storageKey), 10); } catch (e) {}
+    if (!stored || isNaN(stored) || stored <= now || stored > (now + durationMs + 60000)) {
+      stored = now + durationMs;
+      try { localStorage.setItem(storageKey, String(stored)); } catch (e) {}
+    }
+    return stored;
   };
-  tick(); setInterval(tick, 1000);
+
+  let endMs = getEndTime();
+  const storageKey = 'lx_flash_end_' + hours;
+  const pad = n => String(n).padStart(2, '0');
+
+  const tick = () => {
+    const now = Date.now();
+    let d = Math.max(0, endMs - now);
+    if (d <= 0 && type === 'hours') {
+      endMs = now + (hours * 3600 * 1000);
+      try { localStorage.setItem(storageKey, String(endMs)); } catch (e) {}
+      d = Math.max(0, endMs - now);
+    }
+    const h = Math.floor(d / 3600000);
+    const m = Math.floor((d % 3600000) / 60000);
+    const s = Math.floor((d % 60000) / 1000);
+    el.textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  };
+  tick();
+  setInterval(tick, 1000);
 })();
 
 /* Packages fallback */
