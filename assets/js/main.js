@@ -169,7 +169,8 @@ const VM = (() => {
 
 /* Ảnh thẻ nỗi lo (3:4) */
 document.querySelectorAll('[data-problem]').forEach(el => {
-  const i = +el.dataset.problem, src = (CONFIG.problemImages || [])[i], title = el.parentElement.querySelector('h3').textContent;
+  const i = +el.dataset.problem, src = (CONFIG.problemImages || [])[i];
+  const title = (el.parentElement && el.parentElement.querySelector('h3')) ? el.parentElement.querySelector('h3').textContent : '';
   if (src) el.innerHTML = `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`;
   else if (CONFIG.showPlaceholders) { markPreview(); el.innerHTML = `<div class="ph"><span class="ph-badge">Chờ nội dung</span>Ảnh 3:4<br>${esc(title)}</div>`; }
   else el.remove();
@@ -177,7 +178,8 @@ document.querySelectorAll('[data-problem]').forEach(el => {
 
 /* Ảnh 3 bước sử dụng */
 document.querySelectorAll('[data-step]').forEach(el => {
-  const src = (CONFIG.stepImages || [])[+el.dataset.step], title = el.parentElement.querySelector('h3').textContent;
+  const src = (CONFIG.stepImages || [])[+el.dataset.step];
+  const title = (el.parentElement && el.parentElement.querySelector('h3')) ? el.parentElement.querySelector('h3').textContent : '';
   let existingImg = el.querySelector('img');
   if (existingImg) return;
   if (src) el.insertAdjacentHTML('afterbegin', `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`);
@@ -208,7 +210,8 @@ document.querySelectorAll('[data-step]').forEach(el => {
 /* Ảnh minh hoạ thành phần (khung tròn) */
 document.querySelectorAll('[data-ing]').forEach(el => {
   const src = (CONFIG.ingredientImages || [])[+el.dataset.ing];
-  if (src) el.innerHTML = `<img src="${esc(src)}" alt="${esc(el.parentElement.querySelector('h3').textContent)}" loading="lazy">`;
+  const title = (el.parentElement && el.parentElement.querySelector('h3')) ? el.parentElement.querySelector('h3').textContent : '';
+  if (src) el.innerHTML = `<img src="${esc(src)}" alt="${esc(title)}" loading="lazy">`;
 });
 
 /* Video reviews */
@@ -262,8 +265,8 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   summary.innerHTML = `<div class="avg">${avgTxt}</div>${stars(avg)}<p class="avg-sub">Dựa trên ${reviews.length} đánh giá</p><div class="dist">${dist()}</div>`;
   const ratingLine = `${stars(avg)}<span><b>${avgTxt}/5</b> · ${reviews.length} đánh giá</span>`;
   const hero = document.getElementById('heroRating'), form = document.getElementById('formRating');
-  hero.innerHTML = ratingLine; hero.hidden = false;
-  form.innerHTML = ratingLine; form.hidden = false;
+  if (hero) { hero.innerHTML = ratingLine; hero.hidden = false; }
+  if (form) { form.innerHTML = ratingLine; form.hidden = false; }
 
   const FILTERS = [
     ['all', 'Tất cả', () => true],
@@ -373,6 +376,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 /* Countdown – flash sale theo ngày */
 (() => {
   const el = document.getElementById('timer');
+  if (!el) return;
   const pad = n => String(n).padStart(2, '0');
   const tick = () => {
     const now = new Date(), end = new Date(now); end.setHours(23, 59, 59, 999);
@@ -583,21 +587,46 @@ document.querySelectorAll('[data-ing]').forEach(el => {
 
 /* Reveal on scroll */
 (() => {
-  const els = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('in')); return; }
-  const io = new IntersectionObserver(entries => entries.forEach(en => {
-    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-  }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-  els.forEach(el => io.observe(el));
+  const initReveal = () => {
+    const els = document.querySelectorAll('.reveal');
+    document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('in'));
+
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add('in'));
+      return;
+    }
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    }), { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
+    els.forEach(el => io.observe(el));
+
+    // Fallback: Reveal all elements after 1.2s
+    setTimeout(() => {
+      document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+    }, 1200);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initReveal);
+  } else {
+    initReveal();
+  }
 })();
 
 /* Mobile sticky bar: hiện sau hero, ẩn khi tới form */
 (() => {
   const sticky = document.getElementById('sticky');
+  const heroEl = document.querySelector('.hero');
+  const orderEl = document.getElementById('dat-hang');
+  if (!sticky || !heroEl || !orderEl) return;
   let pastHero = false, atOrder = false;
   const update = () => sticky.classList.toggle('show', pastHero && !atOrder);
-  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting; update(); }).observe(document.querySelector('.hero'));
-  new IntersectionObserver(([e]) => { atOrder = e.isIntersecting; update(); }, { threshold: 0.1 }).observe(document.getElementById('dat-hang'));
+  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting; update(); }).observe(heroEl);
+  new IntersectionObserver(([e]) => { atOrder = e.isIntersecting; update(); }, { threshold: 0.1 }).observe(orderEl);
 })();
 
-document.getElementById('year').textContent = new Date().getFullYear();
+const yearEl = document.getElementById('year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
