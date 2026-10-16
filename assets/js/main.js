@@ -318,7 +318,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   ].map(([k, label, fn]) => ({ k, label, fn, n: reviews.filter(fn).length })).filter(f => f.k === 'all' || f.n > 0);
   filtersEl.innerHTML = FILTERS.map((f, i) => `<button type="button" class="chip${i ? '' : ' active'}" data-k="${f.k}">${f.label} (${f.n})</button>`).join('');
 
-  const PAGE = 6;
+  const PAGE = 4;
   let active = FILTERS[0], shown = PAGE;
   const card = (r, idx) => {
     const initial = esc(((r.name || 'K').trim().split(/\s+/).pop() || 'K')[0].toUpperCase());
@@ -366,6 +366,27 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     list34 = legacyFbs.slice(0, half);
     list11 = legacyFbs.slice(half);
   }
+
+  // Đảm bảo mỗi hàng đủ 4 ảnh hiển thị to đẹp trên 1 hàng desktop
+  const default34 = [
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-du-lich.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-hoi-duoi-canh-tay.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-cho-nu.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-hoi-nach-cho-nam.png'
+  ];
+  default34.forEach(src => {
+    if (list34.length < 4 && !list34.includes(src)) list34.push(src);
+  });
+
+  const default11 = [
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/1.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/2.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/3.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/sau-khi-dung-xit-khu-mui-1.png'
+  ];
+  default11.forEach(src => {
+    if (list11.length < 4 && !list11.includes(src)) list11.push(src);
+  });
 
   const allImgs = [...list34, ...list11];
   if (!allImgs.length && !CONFIG.showPlaceholders) {

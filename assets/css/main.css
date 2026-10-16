@@ -294,18 +294,23 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
 .fb-card:hover img { transform: scale(1.03); }
 .fb-card.ph { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--white); color: var(--ink-2); font-size: 14px; border: 1.5px dashed rgba(230,104,29,.25); cursor: default; }
 .fb-card.ph .ph-badge { position: static; margin-bottom: 8px; }
-.fb-slider-34 .fb-card { width: 220px; height: 293px; }
-.fb-slider-11 .fb-card { width: 210px; height: 210px; }
+/* 1 hàng hiển thị đúng 4 ảnh to trên desktop (cả hàng 3:4 và hàng 1:1) */
+.fb-slider-34 .fb-card { flex: 0 0 calc((100% - 48px) / 4); width: calc((100% - 48px) / 4); height: 355px; }
+.fb-slider-11 .fb-card { flex: 0 0 calc((100% - 48px) / 4); width: calc((100% - 48px) / 4); height: 266px; }
+@media (max-width: 1024px) and (min-width: 769px) {
+  .fb-slider-34 .fb-card { flex: 0 0 calc((100% - 32px) / 3); width: calc((100% - 32px) / 3); height: 300px; }
+  .fb-slider-11 .fb-card { flex: 0 0 calc((100% - 32px) / 3); width: calc((100% - 32px) / 3); height: 225px; }
+}
 @media (max-width: 768px) {
   .fb-slider-block { margin-top: 28px; }
   .fb-slider-title { font-size: 16px; }
   .fb-slider { gap: 12px; padding-bottom: 12px; }
-  .fb-slider-34 .fb-card { width: 170px; height: 227px; border-radius: 14px; }
-  .fb-slider-11 .fb-card { width: 160px; height: 160px; border-radius: 14px; }
+  .fb-slider-34 .fb-card { flex: 0 0 calc((100% - 12px) / 2); width: calc((100% - 12px) / 2); height: 260px; border-radius: 14px; }
+  .fb-slider-11 .fb-card { flex: 0 0 calc((100% - 12px) / 2); width: calc((100% - 12px) / 2); height: 195px; border-radius: 14px; }
 }
 @media (max-width: 480px) {
-  .fb-slider-34 .fb-card { width: 145px; height: 193px; }
-  .fb-slider-11 .fb-card { width: 135px; height: 135px; }
+  .fb-slider-34 .fb-card { flex: 0 0 200px; width: 200px; height: 266px; }
+  .fb-slider-11 .fb-card { flex: 0 0 170px; width: 170px; height: 170px; }
 }
 
 /* Trust */

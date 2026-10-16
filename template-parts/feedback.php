@@ -49,6 +49,31 @@ if (empty($urls_34) && empty($urls_11) && !empty($fbs_legacy) && is_array($fbs_l
         $urls_11 = array_slice($legacy_urls, $half);
     }
 }
+
+// Đảm bảo mỗi hàng đủ 4 ảnh hiển thị to đẹp trên 1 hàng desktop
+$default_34 = array(
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-du-lich.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-hoi-duoi-canh-tay.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-cho-nu.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/cong-dung-xit-khu-mui-hoi-nach-cho-nam.png',
+);
+foreach ($default_34 as $src) {
+    if (count($urls_34) < 4 && !in_array($src, $urls_34, true)) {
+        $urls_34[] = $src;
+    }
+}
+
+$default_11 = array(
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/1.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/2.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/3.png',
+    'https://khumui.homecarevietnam.com/wp-content/uploads/2026/10/sau-khi-dung-xit-khu-mui-1.png',
+);
+foreach ($default_11 as $src) {
+    if (count($urls_11) < 4 && !in_array($src, $urls_11, true)) {
+        $urls_11[] = $src;
+    }
+}
 ?>
 <!-- FEEDBACK SCREENSHOTS (2 HÀNG SLIDER) -->
 <section class="section feedback-sec panel" id="feedback">
