@@ -8,6 +8,10 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+$footer_url     = lx_get_field('lx_footer_url', 'option', 'https://homecarevietnam.com');
+if (empty($footer_url)) {
+    $footer_url = 'https://homecarevietnam.com';
+}
 $footer_logo    = lx_get_image_url('lx_footer_logo', '', 'option');
 $footer_title   = lx_get_field('lx_footer_title', 'option', 'Mây Mây - Tự Tin Tỏa Sáng');
 $footer_company = lx_get_field('lx_footer_company', 'option', 'CÔNG TY TNHH CHĂM SÓC MẸ VÀ BÉ TẠI NHÀ HOME CARE');
@@ -33,21 +37,25 @@ $hotline_html = implode(' - ', $hotline_links);
 
 <footer class="footer">
   <div class="container">
-    <div class="footer-logo-wrap">
-      <?php if (!empty($footer_logo)) : ?>
-        <img src="<?php echo $footer_logo; ?>" alt="<?php echo $footer_title; ?>" class="footer-logo" loading="lazy">
-      <?php else : ?>
-        <div class="footer-logo-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-          </svg>
-        </div>
-      <?php endif; ?>
-    </div>
+    <?php if (!empty($footer_logo)) : ?>
+      <div class="footer-logo-wrap">
+        <a href="<?php echo $footer_url; ?>" target="_blank" rel="noopener">
+          <img src="<?php echo $footer_logo; ?>" alt="<?php echo $footer_title; ?>" class="footer-logo" loading="lazy">
+        </a>
+      </div>
+    <?php endif; ?>
 
     <?php if (!empty($footer_title)) : ?>
-      <h4 class="footer-title"><?php echo $footer_title; ?></h4>
+      <h4 class="footer-title">
+        <a href="<?php echo $footer_url; ?>" target="_blank" rel="noopener">
+          <?php echo $footer_title; ?>
+        </a>
+      </h4>
     <?php endif; ?>
+
+    <p class="footer-website">
+      Website: <a href="<?php echo $footer_url; ?>" target="_blank" rel="noopener">homecarevietnam.com</a>
+    </p>
 
     <?php if (!empty($hotline_html)) : ?>
       <p class="footer-hotline">
@@ -56,7 +64,11 @@ $hotline_html = implode(' - ', $hotline_links);
     <?php endif; ?>
 
     <?php if (!empty($footer_company)) : ?>
-      <p class="footer-company"><?php echo $footer_company; ?></p>
+      <p class="footer-company">
+        <a href="<?php echo $footer_url; ?>" target="_blank" rel="noopener">
+          <?php echo $footer_company; ?>
+        </a>
+      </p>
     <?php endif; ?>
 
     <?php if (!empty($footer_address)) : ?>

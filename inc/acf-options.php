@@ -719,6 +719,13 @@ function lx_register_acf_field_group() {
                 'return_format' => 'url',
             ),
             array(
+                'key' => 'field_lx_footer_url',
+                'label' => __('Link website chính (trỏ về)', 'lx-landing'),
+                'name' => 'lx_footer_url',
+                'type' => 'url',
+                'default_value' => 'https://homecarevietnam.com',
+            ),
+            array(
                 'key' => 'field_lx_footer_title',
                 'label' => __('Tên thương hiệu / Slogan chân trang', 'lx-landing'),
                 'name' => 'lx_footer_title',
