@@ -266,11 +266,8 @@ function lx_enqueue_scripts() {
         'totalReviewsDisplay' => lx_get_field('lx_review_total_display', 'option', '1.680') ?: '1.680',
         'ratingScore'         => lx_get_field('lx_review_rating_score', 'option', '4.9') ?: '4.9',
         'starCounts'          => array(
-            '5'   => lx_get_field('lx_review_5star_count', 'option', '1.420') ?: '1.420',
-            '4'   => lx_get_field('lx_review_4star_count', 'option', '195') ?: '195',
-            '3'   => lx_get_field('lx_review_3star_count', 'option', '42') ?: '42',
-            '2'   => lx_get_field('lx_review_2star_count', 'option', '15') ?: '15',
-            '1'   => lx_get_field('lx_review_1star_count', 'option', '8') ?: '8',
+            '5'   => lx_get_field('lx_review_5star_count', 'option', '1.340') ?: '1.340',
+            '4'   => lx_get_field('lx_review_4star_count', 'option', '340') ?: '340',
             'img' => lx_get_field('lx_review_img_count', 'option', '238') ?: '238',
         ),
         'seedingOrders'     => function_exists('lx_get_seeding_orders') ? lx_get_seeding_orders() : array(),

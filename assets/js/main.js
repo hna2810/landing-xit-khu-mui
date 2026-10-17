@@ -318,17 +318,14 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   const sc = CONFIG.starCounts || {};
   const parseCnt = (v, fallback) => v ? (parseInt(String(v).replace(/\D/g, ''), 10) || fallback) : fallback;
 
-  // Natural organic distribution: chia bớt từ 5 sao sang 4, 3, 2, 1 sao
-  const c5 = parseCnt(sc['5'], Math.round(totalNum * 0.845)); // 1.420
-  const c4 = parseCnt(sc['4'], Math.round(totalNum * 0.116)); // 195
-  const c3 = parseCnt(sc['3'], Math.round(totalNum * 0.025)); // 42
-  const c2 = parseCnt(sc['2'], Math.round(totalNum * 0.009)); // 15
-  const c1 = parseCnt(sc['1'], Math.max(1, totalNum - (c5 + c4 + c3 + c2))); // 8
-  const cImg = parseCnt(sc['img'], Math.round(totalNum * 0.142)); // 238
+  // Chỉ chia giữa 5 sao và 4 sao (hoàn toàn không có 3 sao, 2 sao, 1 sao)
+  const c4 = parseCnt(sc['4'], Math.round(totalNum * 0.20)); // Mặc định 340 (20%)
+  const c5 = parseCnt(sc['5'], Math.max(0, totalNum - c4)); // Mặc định 1.340 (80%)
+  const cImg = parseCnt(sc['img'], Math.round(totalNum * 0.142)); // Mặc định 238
 
-  const countMap = { 5: c5, 4: c4, 3: c3, 2: c2, 1: c1 };
+  const countMap = { 5: c5, 4: c4 };
 
-  const dist = () => [5, 4, 3, 2, 1].map(n => {
+  const dist = () => [5, 4].map(n => {
     const cnt = countMap[n];
     const pct = totalNum ? Math.max(1, Math.round(cnt / totalNum * 100)) : 0;
     const numStr = cnt.toLocaleString('vi-VN');
@@ -353,10 +350,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     { k: 'all', label: 'Tất cả', fn: () => true, countTxt: totalDisplay },
     { k: 'img', label: 'Có hình ảnh', fn: r => r.images.length > 0, countTxt: cImg.toLocaleString('vi-VN') },
     { k: '5', label: '5 sao', fn: r => r.rating === 5, countTxt: c5.toLocaleString('vi-VN') },
-    { k: '4', label: '4 sao', fn: r => r.rating === 4, countTxt: c4.toLocaleString('vi-VN') },
-    { k: '3', label: '3 sao', fn: r => r.rating === 3, countTxt: c3.toLocaleString('vi-VN') },
-    { k: '2', label: '2 sao', fn: r => r.rating === 2, countTxt: c2.toLocaleString('vi-VN') },
-    { k: '1', label: '1 sao', fn: r => r.rating === 1, countTxt: c1.toLocaleString('vi-VN') }
+    { k: '4', label: '4 sao', fn: r => r.rating === 4, countTxt: c4.toLocaleString('vi-VN') }
   ];
   filtersEl.innerHTML = FILTERS.map((f, i) => `<button type="button" class="chip${i ? '' : ' active'}" data-k="${f.k}">${f.label} (${f.countTxt})</button>`).join('');
 
