@@ -72,7 +72,7 @@ $zones_data = array(
         <li><svg class="icon"><use href="#i-check"/></svg>Xịt khử mùi vùng tiểu EVA sau sinh.</li>
         <li><svg class="icon"><use href="#i-check"/></svg>Dễ sử dụng tại nhà hoặc mang theo khi đi làm, đi học, du lịch.</li>
       </ul>
-      <a href="#dat-hang" class="btn btn-lg btn-herb reveal d3">Flash sale 49K + Freeship<span class="btn-sep" aria-hidden="true"></span>Mua ngay <svg class="icon"><use href="#i-arrow"/></svg></a>
+      <a href="#dat-hang" class="btn btn-lg btn-herb reveal d3"><span>Flash sale 49K + Freeship</span><span class="btn-sep" aria-hidden="true"></span><span>Mua ngay <svg class="icon"><use href="#i-arrow"/></svg></span></a>
     </div>
   </div>
 </section>
