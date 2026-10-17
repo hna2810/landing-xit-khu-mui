@@ -111,6 +111,22 @@ const VM = (() => {
   const heroBox = document.querySelector('[data-visual="hero"]');
   if (!heroBox) return;
 
+  const heroVideo = heroBox.querySelector('video, iframe, .hero-video-wrap');
+  if (heroVideo) {
+    heroBox.querySelectorAll('.botanical, .bottle-render, .render, .packshot-img').forEach(b => b.remove());
+    const vid = heroBox.querySelector('video');
+    const soundBtn = heroBox.querySelector('.hero-video-sound-toggle');
+    if (vid && soundBtn) {
+      soundBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        vid.muted = !vid.muted;
+        soundBtn.classList.toggle('unmuted', !vid.muted);
+        soundBtn.setAttribute('aria-label', vid.muted ? 'Bật âm thanh' : 'Tắt âm thanh');
+      });
+    }
+    return;
+  }
+
   let photo = heroBox.querySelector('img.photo');
   if (!photo && imgs[0]) {
     heroBox.insertAdjacentHTML('afterbegin', `<img class="photo" src="${esc(imgs[0])}" alt="Xịt khử mùi Gừng Cam">`);
