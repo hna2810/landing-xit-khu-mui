@@ -47,3 +47,18 @@ function lx_fix_zone_options() {
 }
 add_action('init', 'lx_fix_zone_options');
 
+/**
+ * Purge LiteSpeed page cache on deployment trigger
+ */
+add_action('init', function() {
+    if (isset($_GET['lx_purge_cache']) && $_GET['lx_purge_cache'] === 'lx_speed_opt_secret_token_9988') {
+        if (has_action('litespeed_purge_all')) {
+            do_action('litespeed_purge_all');
+        }
+        if (class_exists('\LiteSpeed\Purge')) {
+            \LiteSpeed\Purge::purge_all();
+        }
+        wp_die('Purged LiteSpeed Cache Successfully');
+    }
+});
+
