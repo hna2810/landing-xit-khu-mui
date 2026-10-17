@@ -760,33 +760,44 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     if (open) {
       a.style.maxHeight = a.scrollHeight + 'px';
     } else {
-      a.style.maxHeight = '0px';
+      a.style.maxHeight = a.scrollHeight + 'px';
+      requestAnimationFrame(() => {
+        a.style.maxHeight = '0px';
+      });
     }
   });
 })();
 
-/* Reveal on scroll */
+/* Reveal on scroll with graceful staggered entrance */
 (() => {
   const initReveal = () => {
     const els = document.querySelectorAll('.reveal');
-    document.querySelectorAll('.hero .reveal').forEach(el => el.classList.add('in'));
+
+    // Stagger hero entrance smoothly on page load
+    const heroEls = document.querySelectorAll('.hero .reveal');
+    heroEls.forEach((el, idx) => {
+      setTimeout(() => el.classList.add('in'), 60 + idx * 90);
+    });
 
     if (!('IntersectionObserver' in window)) {
       els.forEach(el => el.classList.add('in'));
       return;
     }
-    const io = new IntersectionObserver(entries => entries.forEach(en => {
-      if (en.isIntersecting) {
-        en.target.classList.add('in');
-        io.unobserve(en.target);
-      }
-    }), { threshold: 0.1, rootMargin: '0px 0px 50px 0px' });
-    els.forEach(el => io.observe(el));
 
-    // Fallback: Reveal all elements after 1.2s
-    setTimeout(() => {
-      document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
-    }, 1200);
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    els.forEach(el => {
+      if (!el.closest('.hero')) {
+        io.observe(el);
+      }
+    });
   };
 
   if (document.readyState === 'loading') {
