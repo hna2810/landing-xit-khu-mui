@@ -776,7 +776,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     // Stagger hero entrance smoothly on page load
     const heroEls = document.querySelectorAll('.hero .reveal');
     heroEls.forEach((el, idx) => {
-      setTimeout(() => el.classList.add('in'), 60 + idx * 90);
+      setTimeout(() => el.classList.add('in'), 60 + idx * 70);
     });
 
     if (!('IntersectionObserver' in window)) {
@@ -791,7 +791,7 @@ document.querySelectorAll('[data-ing]').forEach(el => {
           io.unobserve(en.target);
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px 40px 0px' });
 
     els.forEach(el => {
       if (!el.closest('.hero')) {

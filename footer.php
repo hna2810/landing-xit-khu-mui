@@ -94,9 +94,11 @@ $hotline_html = implode(' - ', $hotline_links);
 <!-- PC FLOATING QUICK CONTACT (Chỉ hiện trên PC góc phải dưới) -->
 <aside class="pc-float-contact" aria-label="Liên hệ nhanh">
   <a href="https://zalo.me/<?php echo esc_attr($zalo_clean); ?>" target="_blank" rel="noopener" class="pc-float-btn pc-float-zalo" aria-label="Chat qua Zalo">
+    <span class="pc-float-ring pc-float-ring-blue"></span>
+    <span class="pc-float-ring pc-float-ring-blue pc-float-ring-2"></span>
     <span class="pc-float-tooltip">Chat Zalo: <?php echo esc_html($zalo_clean); ?></span>
     <span class="pc-float-icon-wrap">
-      <svg class="pc-float-svg" viewBox="0 0 48 48" aria-hidden="true">
+      <svg class="pc-float-svg pc-float-zalo-svg" viewBox="0 0 50 50" aria-hidden="true">
         <use href="#i-zalo"/>
       </svg>
     </span>
@@ -126,8 +128,8 @@ $hotline_html = implode(' - ', $hotline_links);
     </a>
 
     <a href="https://zalo.me/<?php echo esc_attr($zalo_clean); ?>" target="_blank" rel="noopener" class="sticky-action-btn sticky-btn-zalo" aria-label="Chat Zalo <?php echo esc_attr($zalo_clean); ?>">
-      <span class="sticky-action-icon">
-        <svg viewBox="0 0 48 48" aria-hidden="true">
+      <span class="sticky-action-icon sticky-icon-zalo">
+        <svg viewBox="0 0 50 50" aria-hidden="true">
           <use href="#i-zalo"/>
         </svg>
       </span>
