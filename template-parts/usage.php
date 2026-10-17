@@ -16,6 +16,15 @@ if (empty($usage_img)) {
 $z1_img = lx_get_image_url('lx_zone_1_image', '');
 $z2_img = lx_get_image_url('lx_zone_2_image', '');
 $z3_img = lx_get_image_url('lx_zone_3_image', '');
+$z4_img = lx_get_image_url('lx_zone_4_image', '');
+
+if (strpos($z1_img, 'chan') !== false && (empty($z2_img) || strpos($z2_img, 'nach') !== false || strpos($usage_img, 'nach') !== false)) {
+    $temp_z2 = $z1_img;
+    $temp_z1 = (!empty($z2_img) && strpos($z2_img, 'nach') !== false) ? $z2_img : $usage_img;
+    $z1_img  = $temp_z1;
+    $z2_img  = $temp_z2;
+}
+
 $zones_data = array(
     0 => array('title' => 'Vùng nách', 'img' => $z1_img),
     1 => array('title' => 'Vùng chân', 'img' => $z2_img),
@@ -34,7 +43,7 @@ $zones_data = array(
           ?>
             <div class="usage-slide <?php echo $idx === 0 ? 'active' : ''; ?>" data-slide="<?php echo $idx; ?>">
               <?php if (!empty($slide_img)) : ?>
-                <img class="photo" src="<?php echo esc_url($slide_img); ?>" alt="Xịt khử mùi Mây Mây – <?php echo esc_attr($z['title']); ?>">
+                <img class="photo" src="<?php echo $slide_img; ?>" alt="Xịt khử mùi Mây Mây – <?php echo $z['title']; ?>">
               <?php else : ?>
                 <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
                   <use href="#bottle-shape"/>

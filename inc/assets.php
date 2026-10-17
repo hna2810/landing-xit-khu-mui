@@ -220,15 +220,28 @@ function lx_enqueue_scripts() {
     $default_sheet = 'https://script.google.com/macros/s/AKfycbx2mCi48FGEQtg9pjX_YuWUxFbQdxe2aj5iUHDDj4-4s9qLyykE6EZySZ1V6UnZydHJ-A/exec';
     $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', $default_sheet);
 
+    $usage_img = lx_get_image_url('lx_usage_main_image', '');
+    $z1_img    = lx_get_image_url('lx_zone_1_image', '');
+    $z2_img    = lx_get_image_url('lx_zone_2_image', '');
+    $z3_img    = lx_get_image_url('lx_zone_3_image', '');
+    $z4_img    = lx_get_image_url('lx_zone_4_image', '');
+
+    if (strpos($z1_img, 'chan') !== false && (empty($z2_img) || strpos($z2_img, 'nach') !== false || strpos($usage_img, 'nach') !== false)) {
+        $temp_z2 = $z1_img;
+        $temp_z1 = (!empty($z2_img) && strpos($z2_img, 'nach') !== false) ? $z2_img : $usage_img;
+        $z1_img  = $temp_z1;
+        $z2_img  = $temp_z2;
+    }
+
     $wp_config = array(
         'showPlaceholders'  => true,
         'productImages'     => array_values($product_images),
-        'usageImage'        => lx_get_image_url('lx_usage_main_image', ''),
+        'usageImage'        => $usage_img,
         'zoneImages'        => array(
-            lx_get_image_url('lx_zone_1_image', ''),
-            lx_get_image_url('lx_zone_2_image', ''),
-            lx_get_image_url('lx_zone_3_image', ''),
-            lx_get_image_url('lx_zone_4_image', ''),
+            $z1_img,
+            $z2_img,
+            $z3_img,
+            $z4_img,
         ),
         'problemImages'     => array(
             lx_get_image_url('lx_pain_1_image', ''),
