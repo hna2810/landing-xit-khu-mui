@@ -42,7 +42,7 @@ function lx_ensure_cf7_form() {
         . '  <span><strong>Tổng thanh toán:</strong> <small style="display:block; color:#d85c18;">Miễn phí vận chuyển toàn quốc</small></span>' . "\n"
         . '  <b id="cf7Total" style="font-size:22px; color:#d9531e;">49.000đ</b>' . "\n"
         . '</div>' . "\n"
-        . '[submit class:btn class:btn-block id:submitBtn "Freeship toàn quốc – Đặt hàng ngay!"]' . "\n"
+        . '[submit class:btn class:btn-block id:submitBtn "Đặt hàng ngay (Freeship)"]' . "\n"
         . '<p class="form-note">(*) Vui lòng kiểm tra lại thông tin nhận hàng trước khi xác nhận đơn.</p>';
 
     $messages = array(
@@ -259,7 +259,7 @@ function lx_render_order_form() {
         <span>Tổng thanh toán<small>Miễn phí vận chuyển toàn quốc</small></span>
         <b id="total">49.000đ</b>
       </div>
-      <button type="submit" class="btn btn-block" id="submitBtn">Freeship toàn quốc – Đặt hàng ngay!</button>
+      <button type="submit" class="btn btn-block" id="submitBtn">Đặt hàng ngay (Freeship)</button>
       <p class="form-note">(*) Vui lòng kiểm tra lại thông tin nhận hàng trước khi xác nhận đơn.</p>
     </form>
     <?php

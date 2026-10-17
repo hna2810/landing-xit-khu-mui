@@ -808,6 +808,27 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   new IntersectionObserver(([e]) => { atOrder = e.isIntersecting; update(); }, { threshold: 0.1 }).observe(orderEl);
 })();
 
+/* Cuộn mượt và tự động focus trường họ tên khi bấm Mua ngay */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('a[href="#dat-hang"]');
+  if (!btn) return;
+  e.preventDefault();
+  const orderSec = document.getElementById('dat-hang');
+  if (orderSec) {
+    orderSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      const input = orderSec.querySelector('#fName, input[name="your-name"], input[name="name"], input[type="text"]');
+      if (input) {
+        try {
+          input.focus({ preventScroll: true });
+        } catch (err) {
+          input.focus();
+        }
+      }
+    }, 600);
+  }
+});
+
 const yearEl = document.getElementById('year');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
 

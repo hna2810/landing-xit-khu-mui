@@ -793,6 +793,20 @@ function lx_register_acf_field_group() {
                 'default_value' => '0973.871.376 - 0962.131.515',
             ),
             array(
+                'key' => 'field_lx_hotline_tel',
+                'label' => __('Số điện thoại gọi Hotline (nút gọi nhanh)', 'lx-landing'),
+                'name' => 'lx_hotline_tel',
+                'type' => 'text',
+                'default_value' => '0973871376',
+            ),
+            array(
+                'key' => 'field_lx_zalo_number',
+                'label' => __('Số điện thoại Zalo (nút Zalo nhanh)', 'lx-landing'),
+                'name' => 'lx_zalo_number',
+                'type' => 'text',
+                'default_value' => '0973871376',
+            ),
+            array(
                 'key' => 'field_lx_footer_company',
                 'label' => __('Tên công ty doanh nghiệp', 'lx-landing'),
                 'name' => 'lx_footer_company',

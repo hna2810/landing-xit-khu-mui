@@ -20,6 +20,12 @@ $footer_tax     = lx_get_field('lx_footer_tax', 'option', 'Mã số doanh nghi�
 $hotline_raw    = lx_get_field('lx_footer_hotline_display', 'option', '0973.871.376 - 0962.131.515');
 $footer_copy    = lx_get_field('lx_footer_copy', 'option', '© 2026 Home Care. All rights reserved.');
 
+$hotline_tel_acf = lx_get_field('lx_hotline_tel', 'option', '');
+$zalo_num_acf    = lx_get_field('lx_zalo_number', 'option', '');
+$hotline_clean   = !empty($hotline_tel_acf) ? preg_replace('/[^0-9+]/', '', $hotline_tel_acf) : '0973871376';
+$zalo_clean      = !empty($zalo_num_acf) ? preg_replace('/[^0-9]/', '', $zalo_num_acf) : '0973871376';
+$hotline_disp    = !empty($hotline_tel_acf) ? $hotline_tel_acf : '0973.871.376';
+
 $hotlines = explode('-', $hotline_raw);
 $hotline_links = array();
 foreach ($hotlines as $hl) {
@@ -85,10 +91,57 @@ $hotline_html = implode(' - ', $hotline_links);
   </div>
 </footer>
 
+<!-- PC FLOATING QUICK CONTACT (Chỉ hiện trên PC góc phải dưới) -->
+<aside class="pc-float-contact" aria-label="Liên hệ nhanh">
+  <a href="https://zalo.me/<?php echo esc_attr($zalo_clean); ?>" target="_blank" rel="noopener" class="pc-float-btn pc-float-zalo" aria-label="Chat qua Zalo">
+    <span class="pc-float-tooltip">Chat Zalo: <?php echo esc_html($zalo_clean); ?></span>
+    <span class="pc-float-icon-wrap">
+      <svg class="pc-float-svg" viewBox="0 0 48 48" aria-hidden="true">
+        <use href="#i-zalo"/>
+      </svg>
+    </span>
+  </a>
+  <a href="tel:<?php echo esc_attr($hotline_clean); ?>" class="pc-float-btn pc-float-hotline" aria-label="Gọi Hotline">
+    <span class="pc-float-ring"></span>
+    <span class="pc-float-ring pc-float-ring-2"></span>
+    <span class="pc-float-tooltip">Hotline: <?php echo esc_html($hotline_disp); ?></span>
+    <span class="pc-float-icon-wrap">
+      <svg class="pc-float-svg" viewBox="0 0 24 24" aria-hidden="true">
+        <use href="#i-phone"/>
+      </svg>
+    </span>
+  </a>
+</aside>
+
+<!-- MOBILE STICKY BAR (Chỉ hiện trên Mobile: Mua ngay về form, Zalo, Hotline) -->
 <div class="sticky" id="sticky">
-  <div class="container">
-    <div class="sticky-price"><b>49.000đ</b><s>89.000đ</s><small>Freeship toàn quốc</small></div>
-    <a href="#dat-hang" class="btn">Mua ngay</a>
+  <div class="sticky-inner">
+    <a href="tel:<?php echo esc_attr($hotline_clean); ?>" class="sticky-action-btn sticky-btn-call" aria-label="Gọi Hotline <?php echo esc_attr($hotline_disp); ?>">
+      <span class="sticky-action-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 3.5h3.5l1.5 4.5-2.2 1.3a11 11 0 0 0 6.9 6.9L16 14l4.5 1.5V19a1.5 1.5 0 0 1-1.6 1.5C10.7 20 4 13.3 3.5 5.1A1.5 1.5 0 0 1 5 3.5z"/>
+        </svg>
+      </span>
+      <span class="sticky-action-label">Hotline</span>
+    </a>
+
+    <a href="https://zalo.me/<?php echo esc_attr($zalo_clean); ?>" target="_blank" rel="noopener" class="sticky-action-btn sticky-btn-zalo" aria-label="Chat Zalo <?php echo esc_attr($zalo_clean); ?>">
+      <span class="sticky-action-icon">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <use href="#i-zalo"/>
+        </svg>
+      </span>
+      <span class="sticky-action-label">Zalo</span>
+    </a>
+
+    <a href="#dat-hang" class="sticky-btn-buy" id="stickyBuyBtn" aria-label="Mua ngay giá 49.000đ cuộn về form đặt hàng">
+      <span class="sticky-buy-text">Mua ngay</span>
+      <span class="sticky-buy-sep">·</span>
+      <span class="sticky-buy-price">49.000đ</span>
+      <svg class="sticky-buy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 5l7 7-7 7"/>
+      </svg>
+    </a>
   </div>
 </div>
 
