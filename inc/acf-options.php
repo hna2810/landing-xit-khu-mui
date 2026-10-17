@@ -66,6 +66,20 @@ function lx_register_acf_field_group() {
                 'placeholder' => 'https://www.youtube.com/watch?v=... hoặc https://.../video.mp4',
             ),
             array(
+                'key' => 'field_lx_hero_video_ratio',
+                'label' => __('Tỷ lệ hiển thị Video', 'lx-landing'),
+                'name' => 'lx_hero_video_ratio',
+                'type' => 'select',
+                'choices' => array(
+                    '1:1'  => __('Vuông 1:1 (Hiển thị đầy đủ video vuông, không cắt viền)', 'lx-landing'),
+                    '16:9' => __('Ngang 16:9 (Chuẩn màn hình ngang)', 'lx-landing'),
+                    '4:5'  => __('Dọc 4:5 (Dọc tiêu chuẩn)', 'lx-landing'),
+                    '9:16' => __('Dọc 9:16 (Shorts / Reels / TikTok)', 'lx-landing'),
+                ),
+                'default_value' => '1:1',
+                'instructions' => __('Khuyên dùng tỷ lệ Vuông 1:1 cho video quảng cáo / review để hiển thị trọn vẹn cả tiêu đề và nội dung.', 'lx-landing'),
+            ),
+            array(
                 'key' => 'field_lx_hero_video_file',
                 'label' => __('Hoặc Tải lên File Video (.mp4 / .webm)', 'lx-landing'),
                 'name' => 'lx_hero_video_file',

@@ -22,6 +22,7 @@ $hero_gallery      = lx_get_field('lx_hero_gallery', 'option', array());
 $hero_media_type   = lx_get_field('lx_hero_media_type', 'option', 'video');
 $hero_video_url    = lx_get_field('lx_hero_video_url', 'option', '');
 $hero_video_file   = lx_get_field('lx_hero_video_file', 'option', '');
+$hero_video_ratio  = lx_get_field('lx_hero_video_ratio', 'option', '1:1');
 $hero_video_poster = lx_get_field('lx_hero_video_poster', 'option', '');
 if (empty($hero_video_poster)) {
     $hero_video_poster = $product_img;
@@ -52,6 +53,7 @@ if (empty($video_src) && empty($yt_id) && $hero_media_type !== 'image' && file_e
 }
 
 $has_video = (!empty($video_src) || !empty($yt_id)) && $hero_media_type !== 'image';
+$ratio_class = 'ratio-' . sanitize_html_class(str_replace(':', '-', $hero_video_ratio ?: '1-1'));
 ?>
 <!-- HERO -->
 <section class="hero">
@@ -77,11 +79,11 @@ $has_video = (!empty($video_src) || !empty($yt_id)) && $hero_media_type !== 'ima
       </div>
     </div>
     <div class="gallery reveal">
-      <div class="packshot" data-visual="hero" data-media="<?php echo $has_video ? 'video' : 'image'; ?>">
+      <div class="packshot <?php echo $has_video ? 'packshot-video ' . esc_attr($ratio_class) : ''; ?>" data-visual="hero" data-media="<?php echo $has_video ? 'video' : 'image'; ?>">
         <?php if ($has_video) : ?>
           <?php if (!empty($yt_id)) : ?>
             <div class="hero-video-wrap">
-              <iframe class="hero-video-iframe" src="https://www.youtube-nocookie.com/embed/<?php echo esc_attr($yt_id); ?>?autoplay=1&mute=1&loop=1&playlist=<?php echo esc_attr($yt_id); ?>&controls=0&playsinline=1&rel=0&modestbranding=1" title="Video giới thiệu sản phẩm" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              <iframe class="hero-video-iframe" src="https://www.youtube-nocookie.com/embed/<?php echo esc_attr($yt_id); ?>?autoplay=1&mute=1&loop=1&playlist=<?php echo esc_attr($yt_id); ?>&controls=1&playsinline=1&rel=0&modestbranding=1" title="Video giới thiệu sản phẩm" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
           <?php else : ?>
             <video class="photo hero-video" autoplay muted loop playsinline preload="auto" poster="<?php echo esc_url($hero_video_poster); ?>" aria-label="Video giới thiệu sản phẩm">
