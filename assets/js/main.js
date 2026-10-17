@@ -881,6 +881,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   const bar = document.getElementById('quizBar');
   const pill = document.getElementById('quizPill');
+  const percentEl = document.getElementById('quizPercent');
   const headerTitle = document.getElementById('quizHeaderTitle');
   const cards = quizWrap.querySelectorAll('.quiz-step-card');
   const loadingView = document.getElementById('quizLoading');
@@ -897,17 +898,21 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   let selectedEffect = '';
   let selectedNeed = '';
 
-  const stepTitles = {
-    1: 'Vị trí khiến bạn mất tự tin nhất',
-    2: 'Biểu hiện khó chịu nhất đang gặp phải',
-    3: 'Tiêu chí bạn ưu tiên số 1 khi tìm giải pháp'
+  const stepMeta = {
+    1: { title: 'Vị trí khiến bạn mất tự tin nhất', pct: '33% Hoàn tất', w: '33.33%' },
+    2: { title: 'Biểu hiện khó chịu nhất đang gặp phải', pct: '66% Hoàn tất', w: '66.66%' },
+    3: { title: 'Tiêu chí bạn ưu tiên số 1 khi tìm giải pháp', pct: '100% Sẵn sàng phân tích', w: '100%' }
   };
 
   const setStep = step => {
     cards.forEach(c => c.classList.toggle('active', +c.dataset.step === step));
-    if (bar) bar.style.width = (step / 3 * 100) + '%';
-    if (pill) pill.textContent = `Bước ${step} / 3`;
-    if (headerTitle) headerTitle.textContent = stepTitles[step] || '';
+    const meta = stepMeta[step];
+    if (meta) {
+      if (bar) bar.style.width = meta.w;
+      if (pill) pill.textContent = `Bước ${step} / 3`;
+      if (percentEl) percentEl.textContent = meta.pct;
+      if (headerTitle) headerTitle.textContent = meta.title;
+    }
   };
 
   // Step 1: Multi-choice
@@ -934,6 +939,7 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
       btn.classList.add('selected');
       selectedEffect = btn.dataset.effect || '';
       if (btnNext2) btnNext2.disabled = false;
+      setTimeout(() => setStep(3), 280);
     });
   });
 
@@ -957,40 +963,51 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   if (btnBack3) btnBack3.addEventListener('click', () => setStep(2));
 
-  // Submit & Diagnose
+  // Submit & Diagnose with animated scanner
   if (btnSubmit) {
     btnSubmit.addEventListener('click', () => {
-      // Hide question cards, show loading
       cards.forEach(c => (c.style.display = 'none'));
       if (loadingView) loadingView.style.display = 'flex';
 
-      setTimeout(() => {
-        if (loadingView) loadingView.style.display = 'none';
-        if (resultView) {
-          resultView.style.display = 'block';
+      const scannerFill = document.getElementById('scannerFill');
+      const scannerPct = document.getElementById('scannerPct');
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 15) + 10;
+        if (progress > 100) progress = 100;
+        if (scannerFill) scannerFill.style.width = progress + '%';
+        if (scannerPct) scannerPct.textContent = progress + '%';
 
-          // Custom dynamic diagnosis text
-          const resTitle = document.getElementById('resTitle');
-          const resDesc = document.getElementById('resDesc');
-          const resProtocol = document.getElementById('resProtocol');
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            if (loadingView) loadingView.style.display = 'none';
+            if (resultView) {
+              resultView.style.display = 'block';
 
-          if (selectedZones.includes('chan') && !selectedZones.includes('nach')) {
-            if (resTitle) resTitle.textContent = 'Màng vi khuẩn bí chân & Nấm kẽ ẩm Cấp độ 2';
-            if (resDesc) resDesc.textContent = 'Môi trường kín trong giày và tất giữ ẩm nhiệt độ cao, khiến vi khuẩn phân hủy chất sừng biểu bì sinh ra mùi hôi chua khét dai dẳng. Lăn nách thông thường không giải quyết được môi trường giày kín.';
-            if (resProtocol) resProtocol.textContent = 'Xịt trực tiếp vào lòng bàn chân, kẽ ngón và lòng giày với Tinh chất Gừng cay và Trầu không giúp diệt sạch 99.8% nấm men, giữ chân khô ráo suốt 24 tiếng.';
-          } else if (selectedZones.includes('eva')) {
-            if (resTitle) resTitle.textContent = 'Rối loạn nội tiết tố mồ hôi sau sinh Cấp độ 2';
-            if (resDesc) resDesc.textContent = 'Sau sinh nội tiết tố thay đổi đột ngột làm tuyến mồ hôi nhờn hoạt động quá mức, kết hợp mùi sữa tạo thành mùi chua ngái khó chịu. Tuyệt đối không dùng lăn nách hóa chất bít tắc lỗ chân lông vì ảnh hưởng tới bé bú mẹ.';
-            if (resProtocol) resProtocol.textContent = 'Sử dụng công thức 100% thảo mộc thuần chay Mây Mây (Gừng, cam, bạc hà, trầu không) cực kỳ lành tính cho mẹ bỉm, vừa khử sạch mùi chua cơ thể vừa an toàn tuyệt đối.';
-          } else {
-            if (resTitle) resTitle.textContent = 'Tuyến bã nhờn kỵ khí & Cặn ố sợi vải Cấp độ 2';
-            if (resDesc) resDesc.textContent = 'Mồ hôi nách tiết ra gặp vi khuẩn Corynebacterium phân hủy protein thành axit béo không no gây mùi khét chua. Việc từng dùng lăn nách chứa muối nhôm gây bít tắc nang lông, xơ cứng và ố vàng nách áo.';
-            if (resProtocol) resProtocol.textContent = 'Ngừng hoàn toàn lăn nách hóa học. Dùng hoạt chất kháng sinh thực vật từ Gừng & Trầu không để diệt vi khuẩn gây mùi, kết hợp Bạc hà & Cam tươi làm se khít tự nhiên, khô ngay sau 30 giây.';
-          }
+              const resTitle = document.getElementById('resTitle');
+              const resDesc = document.getElementById('resDesc');
+              const resProtocol = document.getElementById('resProtocol');
 
-          resultView.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              if (selectedZones.includes('chan') && !selectedZones.includes('nach')) {
+                if (resTitle) resTitle.textContent = 'Màng vi khuẩn bí chân & Nấm kẽ ẩm Cấp độ 2';
+                if (resDesc) resDesc.textContent = 'Môi trường kín trong giày và tất giữ ẩm nhiệt độ cao, khiến vi khuẩn phân hủy chất sừng biểu bì sinh ra mùi hôi chua khét dai dẳng. Lăn nách thông thường không giải quyết được môi trường giày kín.';
+                if (resProtocol) resProtocol.textContent = 'Xịt trực tiếp vào lòng bàn chân, kẽ ngón và lòng giày với Tinh chất Gừng cay và Trầu không giúp diệt sạch 99.8% nấm men, giữ chân khô ráo suốt 24 tiếng.';
+              } else if (selectedZones.includes('eva')) {
+                if (resTitle) resTitle.textContent = 'Rối loạn nội tiết tố mồ hôi sau sinh Cấp độ 2';
+                if (resDesc) resDesc.textContent = 'Sau sinh nội tiết tố thay đổi đột ngột làm tuyến mồ hôi nhờn hoạt động quá mức, kết hợp mùi sữa tạo thành mùi chua ngái khó chịu. Tuyệt đối không dùng lăn nách hóa chất bít tắc lỗ chân lông vì ảnh hưởng tới bé bú mẹ.';
+                if (resProtocol) resProtocol.textContent = 'Sử dụng công thức 100% thảo mộc thuần chay Mây Mây (Gừng, cam, bạc hà, trầu không) cực kỳ lành tính cho mẹ bỉm, vừa khử sạch mùi chua cơ thể vừa an toàn tuyệt đối.';
+              } else {
+                if (resTitle) resTitle.textContent = 'Tuyến bã nhờn kỵ khí & Cặn ố sợi vải Cấp độ 2';
+                if (resDesc) resDesc.textContent = 'Mồ hôi nách tiết ra gặp vi khuẩn Corynebacterium phân hủy protein thành axit béo không no gây mùi khét chua. Việc từng dùng lăn nách chứa muối nhôm gây bít tắc nang lông, xơ cứng và ố vàng nách áo.';
+                if (resProtocol) resProtocol.textContent = 'Ngừng hoàn toàn lăn nách hóa học. Dùng hoạt chất kháng sinh thực vật từ Gừng & Trầu không để diệt vi khuẩn gây mùi, kết hợp Bạc hà & Cam tươi làm se khít tự nhiên, khô ngay sau 30 giây.';
+              }
+
+              resultView.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 350);
         }
-      }, 1300);
+      }, 100);
     });
   }
 
@@ -1008,91 +1025,77 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
       if (resultView) resultView.style.display = 'none';
       cards.forEach(c => (c.style.display = ''));
       setStep(1);
+      quizWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
 })();
 
 /* =========================================================
-   2. INTERACTIVE BEFORE / AFTER COMPARISON DRAG SLIDER
+   2. INTERACTIVE COMPARISON VS MODE SWITCHER
    ========================================================= */
 (() => {
-  const box = document.getElementById('compareBox');
-  const handle = document.getElementById('compareHandle');
-  const afterView = document.getElementById('afterView');
-  if (!box || !handle || !afterView) return;
+  const btnBad = document.getElementById('btnModeBad');
+  const btnGood = document.getElementById('btnModeGood');
+  const cardBad = document.getElementById('cardBad');
+  const cardGood = document.getElementById('cardGood');
+  if (!btnBad || !btnGood || !cardBad || !cardGood) return;
 
-  let isDragging = false;
+  btnBad.addEventListener('click', () => {
+    btnBad.classList.add('active');
+    btnGood.classList.remove('active');
+    cardBad.classList.add('active');
+    cardGood.classList.remove('active');
+  });
 
-  const updatePosition = clientX => {
-    const rect = box.getBoundingClientRect();
-    let x = clientX - rect.left;
-    let pct = (x / rect.width) * 100;
-    pct = Math.max(5, Math.min(95, pct));
-
-    handle.style.left = `${pct}%`;
-    afterView.style.clipPath = `inset(0 0 0 ${pct}%)`;
-  };
-
-  const onPointerDown = e => {
-    isDragging = true;
-    updatePosition(e.clientX || (e.touches && e.touches[0].clientX));
-  };
-
-  const onPointerMove = e => {
-    if (!isDragging) return;
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    if (clientX !== undefined) {
-      updatePosition(clientX);
-    }
-  };
-
-  const onPointerUp = () => {
-    isDragging = false;
-  };
-
-  // Mouse & Touch events
-  box.addEventListener('mousedown', onPointerDown);
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
-
-  box.addEventListener('touchstart', onPointerDown, { passive: true });
-  window.addEventListener('touchmove', onPointerMove, { passive: true });
-  window.addEventListener('touchend', onPointerUp);
-  window.addEventListener('touchcancel', onPointerUp);
+  btnGood.addEventListener('click', () => {
+    btnGood.classList.add('active');
+    btnBad.classList.remove('active');
+    cardGood.classList.add('active');
+    cardBad.classList.remove('active');
+  });
 })();
 
 /* =========================================================
-   3. INTERACTIVE 4 HERB EXPLORER (TAP TO REVEAL)
+   3. INTERACTIVE 4 HERB LAB EXPLORER
    ========================================================= */
 (() => {
   const tabsWrap = document.getElementById('herbTabs');
-  const detailBox = document.getElementById('herbDetailBox');
-  if (!tabsWrap || !detailBox) return;
+  const detailCard = document.getElementById('herbDetailCard');
+  if (!tabsWrap || !detailCard) return;
 
-  const herbTag = document.getElementById('herbTag');
-  const herbName = document.getElementById('herbName');
+  const herbPill = document.getElementById('herbPill');
+  const herbTitle = document.getElementById('herbTitle');
   const herbDesc = document.getElementById('herbDesc');
+  const herbPotency = document.getElementById('herbPotency');
+  const herbBar = document.getElementById('herbBar');
+  const herbCount = document.getElementById('herbExploredCount');
+
+  const explored = new Set(['gung']);
 
   const herbData = {
     gung: {
-      tag: 'HOẠT CHẤT GINGEROL & ZINGIBERENE',
-      name: 'Gừng Cay – Tiêu diệt 99.8% vi khuẩn gây mùi',
-      desc: 'Gừng chứa hoạt chất kháng viêm, ấm sâu tự nhiên giúp tiêu diệt tận gốc vi khuẩn Corynebacterium trú ngụ trong nang lông và phân hủy protein mồ hôi. Giúp vùng nách và chân luôn sạch thơm, không lo mùi quay trở lại dù vận động mạnh cả ngày.'
+      pill: 'VỊ THẢO MỘC CHỦ ĐẠO',
+      title: 'Gừng sẻ cay nồng · Tinh chất Gingerol & Shogaol',
+      desc: 'Chiết xuất củ gừng già chứa hàm lượng cao Gingerol – một loại kháng sinh thực vật tự nhiên có khả năng ức chế mạnh mẽ vi khuẩn kỵ khí phân hủy protein mồ hôi. Giúp khử sạch mùi hôi nách, mùi mồ hôi chân ngay từ lần xịt đầu tiên và giữ bề mặt da luôn thông thoáng.',
+      potency: '98.6%'
     },
-    traukhong: {
-      tag: 'HOẠT CHẤT EUGENOL & CHAVICOL',
-      name: 'Lá Trầu Không – Kháng sinh thực vật khắc tinh mùi hôi',
-      desc: 'Bài thuốc dân gian bí truyền có khả năng ức chế vi nấm kẽ chân, làm săn se lỗ chân lông tự nhiên mà không gây tắc nghẽn như muối nhôm. Giúp giảm tiết mồ hôi nhờn đến 75% ngay sau lần đầu sử dụng.'
+    trau: {
+      pill: 'KHÁNG SINH THỰC VẬT DÂN GIAN',
+      title: 'Lá Trầu Không · Hoạt chất Chavicol & Eugenol',
+      desc: 'Lá trầu không bánh tẻ có tính sát trùng, kháng nấm kẽ cực mạnh. Hoạt chất Chavicol làm săn se niêm mạc da tự nhiên mà không gây bít nghẽn lỗ chân lông như muối nhôm công nghiệp, triệt tiêu tận gốc nguồn sinh mùi.',
+      potency: '99.2%'
     },
     bacha: {
-      tag: 'TINH DẦU MENTHOL TINH KHIẾT',
-      name: 'Bạc Hà – Hạ nhiệt -5°C, khô thoáng tức thì sau 30s',
-      desc: 'Mang lại cảm giác the mát sảng khoái đánh thức làn da, bốc hơi siêu tốc trong 30 giây giúp nách và lòng bàn chân khô ráo tuyệt đối, không bết dính mồ hôi, đánh tan cảm giác nhờn rít bí bách.'
+      pill: 'LÀM MÁT & KHÔ RÁO TỨC THÌ',
+      title: 'Bạc Hà Tươi · Tinh chất Menthol Tinh Khiết',
+      desc: 'Bốc hơi siêu tốc sau 30 giây mang lại cảm giác the mát tự nhiên, giải phóng nhiệt lượng bề mặt da tức thì, giúp vùng nách và bàn chân luôn khô ráo nhẹ tênh, không bết dính mồ hôi khi ra ngoài trời.',
+      potency: '96.5%'
     },
     cam: {
-      tag: 'D-LIMONENE & VITAMIN C TỰ NHIÊN',
-      name: 'Cam Tươi – Dưỡng sáng mịn, mờ thâm nách sần',
-      desc: 'Hương thơm ngọt dịu tinh tế từ tinh dầu vỏ cam giúp khử mùi ngái khó chịu, đồng thời cung cấp hàm lượng Vitamin C giúp nuôi dưỡng vùng da dưới cánh tay sáng đều màu, xóa mờ vết thâm sần do dùng nhíp hoặc dao cạo.'
+      pill: 'DƯỠNG SÁNG & TRUNG HÒA MÙI',
+      title: 'Vỏ Cam Tươi · D-Limonene & Vitamin C Hữu Cơ',
+      desc: 'Hương thơm ngọt mát, sang trọng từ tinh dầu vỏ cam tự nhiên giúp trung hòa hoàn toàn mùi chua ngái khó chịu. Hàm lượng Vitamin C tự nhiên giúp làm mờ vết thâm sần dưới cánh tay, nuôi dưỡng làn da sáng mịn mềm mại.',
+      potency: '97.8%'
     }
   };
 
@@ -1100,19 +1103,24 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
     const btn = e.target.closest('.herb-tab-btn');
     if (!btn) return;
 
-    const herbKey = btn.dataset.herb;
-    const data = herbData[herbKey];
+    const key = btn.dataset.herb;
+    const data = herbData[key];
     if (!data) return;
 
     tabsWrap.querySelectorAll('.herb-tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    detailBox.style.opacity = '0.3';
+    explored.add(key);
+    if (herbCount) herbCount.textContent = explored.size;
+
+    detailCard.style.opacity = '0.3';
     setTimeout(() => {
-      if (herbTag) herbTag.textContent = data.tag;
-      if (herbName) herbName.textContent = data.name;
+      if (herbPill) herbPill.textContent = data.pill;
+      if (herbTitle) herbTitle.textContent = data.title;
       if (herbDesc) herbDesc.textContent = data.desc;
-      detailBox.style.opacity = '1';
+      if (herbPotency) herbPotency.textContent = data.potency;
+      if (herbBar) herbBar.style.width = data.potency;
+      detailCard.style.opacity = '1';
     }, 150);
   });
 })();

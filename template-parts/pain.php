@@ -1,6 +1,7 @@
 <?php
 /**
  * Interactive Odor Diagnosis Quiz (Replaces static pain cards)
+ * Mobile-First, App-like Gamified Experience
  *
  * @package LXLanding
  */
@@ -13,8 +14,8 @@ if (!defined('ABSPATH')) {
 <section class="section quiz-sec panel" id="kiem-tra-tinh-trang">
   <div class="container">
     <div class="text-center">
-      <p class="label center reveal">Trắc nghiệm nhanh 15 giây</p>
-      <h2 class="h2 display reveal d1">Kiểm tra mức độ mùi cơ thể &amp; <em>nhận phác đồ xử lý</em></h2>
+      <p class="label center reveal">Trắc nghiệm nhanh 10 giây</p>
+      <h2 class="h2 display reveal d1">Kiểm tra mức độ mùi cơ thể &amp; <em>nhận giải pháp chuẩn</em></h2>
       <p class="lead reveal d2">Chạm chọn tình trạng bạn đang gặp phải để nhận phân tích nguyên nhân gốc rễ và phác đồ xử lý phù hợp.</p>
     </div>
 
@@ -24,51 +25,55 @@ if (!defined('ABSPATH')) {
         <div class="quiz-progress-track">
           <div class="quiz-progress-bar" id="quizBar" style="width: 33.33%;"></div>
         </div>
-        <div class="quiz-step-label">
+        <div class="quiz-step-meta">
           <span class="quiz-step-pill" id="quizPill">Bước 1 / 3</span>
+          <span class="quiz-step-percent" id="quizPercent">33% Hoàn tất</span>
+        </div>
+        <div class="quiz-header-title-wrap">
           <span class="quiz-step-title" id="quizHeaderTitle">Vị trí khiến bạn mất tự tin nhất</span>
         </div>
       </div>
 
-      <!-- Question 1 -->
+      <!-- Question 1: Vùng cơ thể -->
       <div class="quiz-step-card active" data-step="1">
-        <h3 class="quiz-question-title">1. Vùng da nào bạn đang muốn xử lý dứt điểm mùi hôi?</h3>
-        <p class="quiz-question-sub">Chạm chọn 1 hoặc nhiều vùng cơ thể:</p>
-        <div class="quiz-options-grid grid-2">
+        <h3 class="quiz-question-title">1. Bạn đang muốn xử lý dứt điểm mùi hôi ở vùng nào?</h3>
+        <p class="quiz-question-sub">Chạm chọn 1 hoặc nhiều vùng cơ thể (có thể chọn nhiều):</p>
+        
+        <div class="quiz-options-list">
           <button type="button" class="quiz-choice" data-type="nach">
-            <span class="quiz-choice-badge">01</span>
+            <span class="quiz-choice-icon">💧</span>
             <div class="quiz-choice-body">
               <strong>Vùng nách áo (Dưới cánh tay)</strong>
-              <small>Áo ướt đẫm mồ hôi, ố vàng nách, mùi chua nồng khi vận động</small>
+              <small>Đổ mồ hôi nhiều, ố vàng nách áo, mùi chua nồng khó chịu khi hoạt động</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice" data-type="chan">
-            <span class="quiz-choice-badge">02</span>
+            <span class="quiz-choice-icon">👟</span>
             <div class="quiz-choice-body">
-              <strong>Vùng chân &amp; Giày tất</strong>
-              <small>Đi giày cả ngày bí bách, ngại tháo giày nơi đông người vì mùi nặng</small>
+              <strong>Bàn chân &amp; Giày tất bí bách</strong>
+              <small>Đi giày cả ngày chân ẩm ướt, ngại cởi giày nơi đông người vì mùi nặng</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice" data-type="body">
-            <span class="quiz-choice-badge">03</span>
+            <span class="quiz-choice-icon">🏃</span>
             <div class="quiz-choice-body">
               <strong>Mùi mồ hôi cơ thể toàn thân</strong>
-              <small>Dễ đổ mồ hôi nhờn ở lưng, ngực, mùi khó chịu dù mới tắm xong</small>
+              <small>Mồ hôi nhờn dính ở lưng, ngực, dễ có mùi khó chịu dù vừa mới tắm</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice" data-type="eva">
-            <span class="quiz-choice-badge">04</span>
+            <span class="quiz-choice-icon">🌸</span>
             <div class="quiz-choice-body">
-              <strong>Mẹ sau sinh / Vùng tiểu EVA</strong>
-              <small>Rối loạn nội tiết tố sau sinh, cơ thể nặng mùi chua ngái, ngại gần chồng</small>
+              <strong>Phụ nữ sau sinh &amp; Vùng nhạy cảm</strong>
+              <small>Rối loạn nội tiết tố sau sinh, cơ thể nặng mùi chua ngái, ngại gần gũi</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
         </div>
 
@@ -79,36 +84,37 @@ if (!defined('ABSPATH')) {
         </div>
       </div>
 
-      <!-- Question 2 -->
+      <!-- Question 2: Biểu hiện lo lắng -->
       <div class="quiz-step-card" data-step="2">
-        <h3 class="quiz-question-title">2. Biểu hiện nào khiến bạn thấy phiền toái nhất?</h3>
-        <p class="quiz-question-sub">Chọn biểu hiện bạn lo lắng nhất hiện tại:</p>
-        <div class="quiz-options-grid grid-1">
+        <h3 class="quiz-question-title">2. Biểu hiện nào khiến bạn lo lắng &amp; mệt mỏi nhất?</h3>
+        <p class="quiz-question-sub">Chạm chọn 1 biểu hiện bạn quan tâm nhất:</p>
+        
+        <div class="quiz-options-list">
           <button type="button" class="quiz-choice single" data-effect="yellow">
-            <span class="quiz-choice-badge">A</span>
+            <span class="quiz-choice-icon">👕</span>
             <div class="quiz-choice-body">
               <strong>Áo trắng bị ố vàng, nách áo bết dính và cứng đơ</strong>
-              <small>Nhiều áo sơ mi, áo phông mới mua phải vứt bỏ vì giặt tẩy không sạch</small>
+              <small>Nhiều áo sơ mi, áo phông mới mua phải vứt bỏ vì giặt tẩy không bao giờ sạch</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice single" data-effect="shame">
-            <span class="quiz-choice-badge">B</span>
+            <span class="quiz-choice-icon">😔</span>
             <div class="quiz-choice-body">
-              <strong>Không dám giơ tay hoặc cởi giày nơi đông người</strong>
-              <small>Đi thang máy, phòng máy lạnh kín luôn phải khép nép vì sợ người khác ngửi thấy</small>
+              <strong>Luôn phải khép nép, sợ người xung quanh ngửi thấy</strong>
+              <small>Đi thang máy, phòng họp máy lạnh kín luôn mất tự tin, không dám giơ tay giao tiếp</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice single" data-effect="fast">
-            <span class="quiz-choice-badge">C</span>
+            <span class="quiz-choice-icon">⏳</span>
             <div class="quiz-choice-body">
               <strong>Mùi quay trở lại rất nhanh chỉ sau 1 - 2 tiếng</strong>
-              <small>Đã dùng thử nhiều loại lăn nách nhưng chỉ át được mùi tạm thời, sau đó nồng hơn</small>
+              <small>Lăn nách thông thường chỉ át mùi tạm thời, sau đó hòa lẫn mồ hôi nồng gắt hơn</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
         </div>
 
@@ -120,73 +126,75 @@ if (!defined('ABSPATH')) {
         </div>
       </div>
 
-      <!-- Question 3 -->
+      <!-- Question 3: Tiêu chí ưu tiên -->
       <div class="quiz-step-card" data-step="3">
-        <h3 class="quiz-question-title">3. Bạn mong muốn giải pháp như thế nào nhất?</h3>
-        <p class="quiz-question-sub">Chọn tiêu chí bạn ưu tiên số 1:</p>
-        <div class="quiz-options-grid grid-2">
+        <h3 class="quiz-question-title">3. Bạn mong muốn một giải pháp như thế nào nhất?</h3>
+        <p class="quiz-question-sub">Chạm chọn tiêu chí bạn ưu tiên số 1:</p>
+        
+        <div class="quiz-options-list">
           <button type="button" class="quiz-choice single" data-need="dry30s">
-            <span class="quiz-choice-badge">✓</span>
+            <span class="quiz-choice-icon">⏱️</span>
             <div class="quiz-choice-body">
-              <strong>Khô thoáng siêu tốc sau 30 giây</strong>
-              <small>Không bết dính, xịt xong mặc áo ngay không chờ đợi</small>
+              <strong>Khô thoáng siêu tốc sau đúng 30 giây</strong>
+              <small>Không bết dính, xịt xong mặc áo ngay không cần đứng quạt chờ đợi</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice single" data-need="no-stain">
-            <span class="quiz-choice-badge">✓</span>
+            <span class="quiz-choice-icon">🛡️</span>
             <div class="quiz-choice-body">
-              <strong>100% Không để lại vệt ố vàng áo</strong>
-              <small>Bảo vệ toàn bộ áo sơ mi, áo phông trắng luôn sạch đẹp</small>
+              <strong>100% Không bao giờ để lại vệt ố vàng áo</strong>
+              <small>Bảo vệ toàn bộ áo sơ mi, áo phông trắng luôn sạch tinh tươm và mềm mại</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice single" data-need="herbal">
-            <span class="quiz-choice-badge">✓</span>
+            <span class="quiz-choice-icon">🌿</span>
             <div class="quiz-choice-body">
-              <strong>Thảo mộc thuần chay lành tính</strong>
-              <small>Gừng, trầu không, bạc hà, cam tươi dịu nhẹ cho mọi loại da</small>
+              <strong>Thảo mộc thuần chay, an toàn lành tính</strong>
+              <small>Gừng sẻ, trầu không, bạc hà, cam ngọt dịu nhẹ cho mọi loại da và mẹ bầu</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
 
           <button type="button" class="quiz-choice single" data-need="versatile">
-            <span class="quiz-choice-badge">✓</span>
+            <span class="quiz-choice-icon">🎒</span>
             <div class="quiz-choice-body">
-              <strong>Xịt đa năng: nách, chân, giày tất</strong>
-              <small>Chai 30ml bỏ túi xách, cốp xe tiện dụng dùng mọi lúc mọi nơi</small>
+              <strong>Chai xịt nhỏ gọn, dùng đa năng tiện lợi</strong>
+              <small>Dung tích 30ml bỏ túi xách, cốp xe tiện dụng xịt nách, chân, giày tất mọi lúc</small>
             </div>
-            <span class="quiz-choice-radio"></span>
+            <span class="quiz-choice-check"></span>
           </button>
         </div>
 
         <div class="quiz-action-bar flex-between">
           <button type="button" class="btn-quiz-back" id="btnBack3">&larr; Quay lại</button>
           <button type="button" class="btn btn-quiz-next btn-finish" id="btnSubmitQuiz" disabled>
-            Phân tích tình trạng &amp; Xem kết quả ⚡
+            Phân tích tình trạng &amp; Nhận kết quả ⚡
           </button>
         </div>
       </div>
 
       <!-- State: Loading / Analyzing Animation -->
       <div class="quiz-loading-view" id="quizLoading" style="display:none;">
-        <div class="quiz-loading-pulse">
-          <div class="pulse-ring"></div>
-          <div class="pulse-icon">🔍</div>
+        <div class="quiz-scanner-circle">
+          <div class="scanner-sweep"></div>
+          <span class="scanner-icon">🧬</span>
         </div>
-        <h4>Đang phân tích cấu trúc vi khuẩn &amp; tuyến mồ hôi...</h4>
-        <p>Hệ thống đang đối chiếu dữ liệu với hơn 14.200 ca xử lý mùi cơ thể thành công</p>
-        <div class="analyzing-bar">
-          <div class="analyzing-fill"></div>
+        <h4 class="scanner-heading">Đang phân tích hệ vi khuẩn kỵ khí &amp; tuyến mồ hôi...</h4>
+        <p class="scanner-sub">Hệ thống đang đối chiếu dữ liệu triệu chứng với hơn 14.200 ca xử lý mùi thành công</p>
+        <div class="scanner-progress-bar">
+          <div class="scanner-progress-fill" id="scannerFill"></div>
         </div>
+        <span class="scanner-percent" id="scannerPct">0%</span>
       </div>
 
       <!-- State: Result Diagnosis Card -->
       <div class="quiz-result-view" id="quizResult" style="display:none;">
         <div class="result-header">
-          <span class="result-pill">KẾT QUẢ PHÂN TÍCH CHUYÊN SÂU</span>
+          <span class="result-pill">BÁO CÁO PHÂN TÍCH CHUYÊN SÂU</span>
           <h3 class="result-headline">Tình trạng: <span id="resTitle" class="highlight-level">Tuyến bã nhờn kỵ khí Cấp độ 2</span></h3>
         </div>
 
@@ -222,7 +230,7 @@ if (!defined('ABSPATH')) {
             Nhận liệu trình trợ giá 49.000đ (Freeship toàn quốc) &rarr;
           </a>
           <button type="button" class="btn-retake-quiz" id="btnRetakeQuiz">
-            ↻ Chọn lại triệu chứng khác
+            ↻ Kiểm tra lại tình trạng khác
           </button>
         </div>
       </div>
