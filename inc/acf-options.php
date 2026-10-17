@@ -704,6 +704,62 @@ function lx_register_acf_field_group() {
                     ),
                 ),
             ),
+
+            // ── TAB 12: CHÂN TRANG (FOOTER) ──────────────────────────
+            array(
+                'key' => 'field_tab_footer',
+                'label' => __('12. Chân trang (Footer)', 'lx-landing'),
+                'type' => 'tab',
+            ),
+            array(
+                'key' => 'field_lx_footer_logo',
+                'label' => __('Logo tròn chân trang', 'lx-landing'),
+                'name' => 'lx_footer_logo',
+                'type' => 'image',
+                'return_format' => 'url',
+            ),
+            array(
+                'key' => 'field_lx_footer_title',
+                'label' => __('Tên thương hiệu / Slogan chân trang', 'lx-landing'),
+                'name' => 'lx_footer_title',
+                'type' => 'text',
+                'default_value' => 'Mây Mây - Tự Tin Tỏa Sáng',
+            ),
+            array(
+                'key' => 'field_lx_footer_hotline_display',
+                'label' => __('Hotline hiển thị', 'lx-landing'),
+                'name' => 'lx_footer_hotline_display',
+                'type' => 'text',
+                'default_value' => '0973.871.376 - 0962.131.515',
+            ),
+            array(
+                'key' => 'field_lx_footer_company',
+                'label' => __('Tên công ty doanh nghiệp', 'lx-landing'),
+                'name' => 'lx_footer_company',
+                'type' => 'text',
+                'default_value' => 'CÔNG TY TNHH CHĂM SÓC MẸ VÀ BÉ TẠI NHÀ HOME CARE',
+            ),
+            array(
+                'key' => 'field_lx_footer_address',
+                'label' => __('Địa chỉ công ty', 'lx-landing'),
+                'name' => 'lx_footer_address',
+                'type' => 'text',
+                'default_value' => 'Địa chỉ: 20 Huy Du, Phường Từ Liêm, TP Hà Nội, Việt Nam.',
+            ),
+            array(
+                'key' => 'field_lx_footer_tax',
+                'label' => __('Mã số thuế / Giấy phép kinh doanh', 'lx-landing'),
+                'name' => 'lx_footer_tax',
+                'type' => 'text',
+                'default_value' => 'Mã số doanh nghiệp: 0107375668 do Sở Kế hoạch & Đầu tư TP Hà Nội cấp lần đầu ngày 29/03/2016',
+            ),
+            array(
+                'key' => 'field_lx_footer_copy',
+                'label' => __('Dòng bản quyền chân trang', 'lx-landing'),
+                'name' => 'lx_footer_copy',
+                'type' => 'text',
+                'default_value' => '© 2026 Home Care. All rights reserved.',
+            ),
         ),
         'location' => array(
             array(

@@ -8,16 +8,67 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+$footer_logo    = lx_get_image_url('lx_footer_logo', '', 'option');
+$footer_title   = lx_get_field('lx_footer_title', 'option', 'Mây Mây - Tự Tin Tỏa Sáng');
+$footer_company = lx_get_field('lx_footer_company', 'option', 'CÔNG TY TNHH CHĂM SÓC MẸ VÀ BÉ TẠI NHÀ HOME CARE');
+$footer_address = lx_get_field('lx_footer_address', 'option', 'Địa chỉ: 20 Huy Du, Phường Từ Liêm, TP Hà Nội, Việt Nam.');
+$footer_tax     = lx_get_field('lx_footer_tax', 'option', 'Mã số doanh nghiệp: 0107375668 do Sở Kế hoạch & Đầu tư TP Hà Nội cấp lần đầu ngày 29/03/2016');
+$hotline_raw    = lx_get_field('lx_footer_hotline_display', 'option', '0973.871.376 - 0962.131.515');
+$footer_copy    = lx_get_field('lx_footer_copy', 'option', '© 2026 Home Care. All rights reserved.');
+
+$hotlines = explode('-', $hotline_raw);
+$hotline_links = array();
+foreach ($hotlines as $hl) {
+    $hl_clean = trim($hl);
+    $hl_tel   = preg_replace('/[^0-9+]/', '', $hl_clean);
+    if (!empty($hl_tel)) {
+        $hotline_links[] = '<a href="tel:' . $hl_tel . '">' . $hl_clean . '</a>';
+    } else {
+        $hotline_links[] = $hl_clean;
+    }
+}
+$hotline_html = implode(' - ', $hotline_links);
 ?>
 </main>
 
 <footer class="footer">
   <div class="container">
-    <div class="logo">Mây Mây</div>
-    <p class="footer-tagline">Chăm sóc cơ thể thơm mát, tự tin hơn trong từng khoảnh khắc.</p>
-    <div class="footer-bottom">
-      <span>© <span id="year"><?php echo esc_html(date('Y')); ?></span> Home Care Việt Nam</span>
-      <span>Số công bố 60/26/CBMP-NB</span>
+    <div class="footer-logo-wrap">
+      <?php if (!empty($footer_logo)) : ?>
+        <img src="<?php echo $footer_logo; ?>" alt="<?php echo $footer_title; ?>" class="footer-logo" loading="lazy">
+      <?php else : ?>
+        <div class="footer-logo-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </div>
+      <?php endif; ?>
+    </div>
+
+    <?php if (!empty($footer_title)) : ?>
+      <h4 class="footer-title"><?php echo $footer_title; ?></h4>
+    <?php endif; ?>
+
+    <?php if (!empty($hotline_html)) : ?>
+      <p class="footer-hotline">
+        Hotline: <?php echo $hotline_html; ?>
+      </p>
+    <?php endif; ?>
+
+    <?php if (!empty($footer_company)) : ?>
+      <p class="footer-company"><?php echo $footer_company; ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($footer_address)) : ?>
+      <p class="footer-address"><?php echo $footer_address; ?></p>
+    <?php endif; ?>
+
+    <?php if (!empty($footer_tax)) : ?>
+      <p class="footer-tax"><?php echo $footer_tax; ?></p>
+    <?php endif; ?>
+
+    <div class="footer-copy">
+      <?php echo !empty($footer_copy) ? $footer_copy : ('© ' . date('Y') . ' Home Care. All rights reserved.'); ?>
     </div>
   </div>
 </footer>
