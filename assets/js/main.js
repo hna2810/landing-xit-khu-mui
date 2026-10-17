@@ -871,3 +871,360 @@ if (yearEl) yearEl.textContent = new Date().getFullYear();
   // Start after 3.5 seconds
   scheduleNext(3500);
 })();
+
+/* =========================================================
+   1. INTERACTIVE ODOR QUIZ & ASSESSMENT SCANNER
+   ========================================================= */
+(() => {
+  const quizWrap = document.getElementById('odorQuizWrap');
+  if (!quizWrap) return;
+
+  const bar = document.getElementById('quizBar');
+  const pill = document.getElementById('quizPill');
+  const headerTitle = document.getElementById('quizHeaderTitle');
+  const cards = quizWrap.querySelectorAll('.quiz-step-card');
+  const loadingView = document.getElementById('quizLoading');
+  const resultView = document.getElementById('quizResult');
+
+  const btnNext1 = document.getElementById('btnNext1');
+  const btnNext2 = document.getElementById('btnNext2');
+  const btnBack2 = document.getElementById('btnBack2');
+  const btnBack3 = document.getElementById('btnBack3');
+  const btnSubmit = document.getElementById('btnSubmitQuiz');
+  const btnRetake = document.getElementById('btnRetakeQuiz');
+
+  let selectedZones = [];
+  let selectedEffect = '';
+  let selectedNeed = '';
+
+  const stepTitles = {
+    1: 'Vị trí khiến bạn mất tự tin nhất',
+    2: 'Biểu hiện khó chịu nhất đang gặp phải',
+    3: 'Tiêu chí bạn ưu tiên số 1 khi tìm giải pháp'
+  };
+
+  const setStep = step => {
+    cards.forEach(c => c.classList.toggle('active', +c.dataset.step === step));
+    if (bar) bar.style.width = (step / 3 * 100) + '%';
+    if (pill) pill.textContent = `Bước ${step} / 3`;
+    if (headerTitle) headerTitle.textContent = stepTitles[step] || '';
+  };
+
+  // Step 1: Multi-choice
+  const step1Choices = quizWrap.querySelectorAll('[data-step="1"] .quiz-choice');
+  step1Choices.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('selected');
+      selectedZones = [...quizWrap.querySelectorAll('[data-step="1"] .quiz-choice.selected')].map(b => b.dataset.type);
+      if (btnNext1) btnNext1.disabled = selectedZones.length === 0;
+    });
+  });
+
+  if (btnNext1) {
+    btnNext1.addEventListener('click', () => {
+      if (selectedZones.length > 0) setStep(2);
+    });
+  }
+
+  // Step 2: Single-choice
+  const step2Choices = quizWrap.querySelectorAll('[data-step="2"] .quiz-choice');
+  step2Choices.forEach(btn => {
+    btn.addEventListener('click', () => {
+      step2Choices.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedEffect = btn.dataset.effect || '';
+      if (btnNext2) btnNext2.disabled = false;
+    });
+  });
+
+  if (btnBack2) btnBack2.addEventListener('click', () => setStep(1));
+  if (btnNext2) {
+    btnNext2.addEventListener('click', () => {
+      if (selectedEffect) setStep(3);
+    });
+  }
+
+  // Step 3: Single-choice
+  const step3Choices = quizWrap.querySelectorAll('[data-step="3"] .quiz-choice');
+  step3Choices.forEach(btn => {
+    btn.addEventListener('click', () => {
+      step3Choices.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedNeed = btn.dataset.need || '';
+      if (btnSubmit) btnSubmit.disabled = false;
+    });
+  });
+
+  if (btnBack3) btnBack3.addEventListener('click', () => setStep(2));
+
+  // Submit & Diagnose
+  if (btnSubmit) {
+    btnSubmit.addEventListener('click', () => {
+      // Hide question cards, show loading
+      cards.forEach(c => (c.style.display = 'none'));
+      if (loadingView) loadingView.style.display = 'flex';
+
+      setTimeout(() => {
+        if (loadingView) loadingView.style.display = 'none';
+        if (resultView) {
+          resultView.style.display = 'block';
+
+          // Custom dynamic diagnosis text
+          const resTitle = document.getElementById('resTitle');
+          const resDesc = document.getElementById('resDesc');
+          const resProtocol = document.getElementById('resProtocol');
+
+          if (selectedZones.includes('chan') && !selectedZones.includes('nach')) {
+            if (resTitle) resTitle.textContent = 'Màng vi khuẩn bí chân & Nấm kẽ ẩm Cấp độ 2';
+            if (resDesc) resDesc.textContent = 'Môi trường kín trong giày và tất giữ ẩm nhiệt độ cao, khiến vi khuẩn phân hủy chất sừng biểu bì sinh ra mùi hôi chua khét dai dẳng. Lăn nách thông thường không giải quyết được môi trường giày kín.';
+            if (resProtocol) resProtocol.textContent = 'Xịt trực tiếp vào lòng bàn chân, kẽ ngón và lòng giày với Tinh chất Gừng cay và Trầu không giúp diệt sạch 99.8% nấm men, giữ chân khô ráo suốt 24 tiếng.';
+          } else if (selectedZones.includes('eva')) {
+            if (resTitle) resTitle.textContent = 'Rối loạn nội tiết tố mồ hôi sau sinh Cấp độ 2';
+            if (resDesc) resDesc.textContent = 'Sau sinh nội tiết tố thay đổi đột ngột làm tuyến mồ hôi nhờn hoạt động quá mức, kết hợp mùi sữa tạo thành mùi chua ngái khó chịu. Tuyệt đối không dùng lăn nách hóa chất bít tắc lỗ chân lông vì ảnh hưởng tới bé bú mẹ.';
+            if (resProtocol) resProtocol.textContent = 'Sử dụng công thức 100% thảo mộc thuần chay Mây Mây (Gừng, cam, bạc hà, trầu không) cực kỳ lành tính cho mẹ bỉm, vừa khử sạch mùi chua cơ thể vừa an toàn tuyệt đối.';
+          } else {
+            if (resTitle) resTitle.textContent = 'Tuyến bã nhờn kỵ khí & Cặn ố sợi vải Cấp độ 2';
+            if (resDesc) resDesc.textContent = 'Mồ hôi nách tiết ra gặp vi khuẩn Corynebacterium phân hủy protein thành axit béo không no gây mùi khét chua. Việc từng dùng lăn nách chứa muối nhôm gây bít tắc nang lông, xơ cứng và ố vàng nách áo.';
+            if (resProtocol) resProtocol.textContent = 'Ngừng hoàn toàn lăn nách hóa học. Dùng hoạt chất kháng sinh thực vật từ Gừng & Trầu không để diệt vi khuẩn gây mùi, kết hợp Bạc hà & Cam tươi làm se khít tự nhiên, khô ngay sau 30 giây.';
+          }
+
+          resultView.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 1300);
+    });
+  }
+
+  // Retake
+  if (btnRetake) {
+    btnRetake.addEventListener('click', () => {
+      selectedZones = [];
+      selectedEffect = '';
+      selectedNeed = '';
+      quizWrap.querySelectorAll('.quiz-choice').forEach(b => b.classList.remove('selected'));
+      if (btnNext1) btnNext1.disabled = true;
+      if (btnNext2) btnNext2.disabled = true;
+      if (btnSubmit) btnSubmit.disabled = true;
+
+      if (resultView) resultView.style.display = 'none';
+      cards.forEach(c => (c.style.display = ''));
+      setStep(1);
+    });
+  }
+})();
+
+/* =========================================================
+   2. INTERACTIVE BEFORE / AFTER COMPARISON DRAG SLIDER
+   ========================================================= */
+(() => {
+  const box = document.getElementById('compareBox');
+  const handle = document.getElementById('compareHandle');
+  const afterView = document.getElementById('afterView');
+  if (!box || !handle || !afterView) return;
+
+  let isDragging = false;
+
+  const updatePosition = clientX => {
+    const rect = box.getBoundingClientRect();
+    let x = clientX - rect.left;
+    let pct = (x / rect.width) * 100;
+    pct = Math.max(5, Math.min(95, pct));
+
+    handle.style.left = `${pct}%`;
+    afterView.style.clipPath = `inset(0 0 0 ${pct}%)`;
+  };
+
+  const onPointerDown = e => {
+    isDragging = true;
+    updatePosition(e.clientX || (e.touches && e.touches[0].clientX));
+  };
+
+  const onPointerMove = e => {
+    if (!isDragging) return;
+    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    if (clientX !== undefined) {
+      updatePosition(clientX);
+    }
+  };
+
+  const onPointerUp = () => {
+    isDragging = false;
+  };
+
+  // Mouse & Touch events
+  box.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+
+  box.addEventListener('touchstart', onPointerDown, { passive: true });
+  window.addEventListener('touchmove', onPointerMove, { passive: true });
+  window.addEventListener('touchend', onPointerUp);
+  window.addEventListener('touchcancel', onPointerUp);
+})();
+
+/* =========================================================
+   3. INTERACTIVE 4 HERB EXPLORER (TAP TO REVEAL)
+   ========================================================= */
+(() => {
+  const tabsWrap = document.getElementById('herbTabs');
+  const detailBox = document.getElementById('herbDetailBox');
+  if (!tabsWrap || !detailBox) return;
+
+  const herbTag = document.getElementById('herbTag');
+  const herbName = document.getElementById('herbName');
+  const herbDesc = document.getElementById('herbDesc');
+
+  const herbData = {
+    gung: {
+      tag: 'HOẠT CHẤT GINGEROL & ZINGIBERENE',
+      name: 'Gừng Cay – Tiêu diệt 99.8% vi khuẩn gây mùi',
+      desc: 'Gừng chứa hoạt chất kháng viêm, ấm sâu tự nhiên giúp tiêu diệt tận gốc vi khuẩn Corynebacterium trú ngụ trong nang lông và phân hủy protein mồ hôi. Giúp vùng nách và chân luôn sạch thơm, không lo mùi quay trở lại dù vận động mạnh cả ngày.'
+    },
+    traukhong: {
+      tag: 'HOẠT CHẤT EUGENOL & CHAVICOL',
+      name: 'Lá Trầu Không – Kháng sinh thực vật khắc tinh mùi hôi',
+      desc: 'Bài thuốc dân gian bí truyền có khả năng ức chế vi nấm kẽ chân, làm săn se lỗ chân lông tự nhiên mà không gây tắc nghẽn như muối nhôm. Giúp giảm tiết mồ hôi nhờn đến 75% ngay sau lần đầu sử dụng.'
+    },
+    bacha: {
+      tag: 'TINH DẦU MENTHOL TINH KHIẾT',
+      name: 'Bạc Hà – Hạ nhiệt -5°C, khô thoáng tức thì sau 30s',
+      desc: 'Mang lại cảm giác the mát sảng khoái đánh thức làn da, bốc hơi siêu tốc trong 30 giây giúp nách và lòng bàn chân khô ráo tuyệt đối, không bết dính mồ hôi, đánh tan cảm giác nhờn rít bí bách.'
+    },
+    cam: {
+      tag: 'D-LIMONENE & VITAMIN C TỰ NHIÊN',
+      name: 'Cam Tươi – Dưỡng sáng mịn, mờ thâm nách sần',
+      desc: 'Hương thơm ngọt dịu tinh tế từ tinh dầu vỏ cam giúp khử mùi ngái khó chịu, đồng thời cung cấp hàm lượng Vitamin C giúp nuôi dưỡng vùng da dưới cánh tay sáng đều màu, xóa mờ vết thâm sần do dùng nhíp hoặc dao cạo.'
+    }
+  };
+
+  tabsWrap.addEventListener('click', e => {
+    const btn = e.target.closest('.herb-tab-btn');
+    if (!btn) return;
+
+    const herbKey = btn.dataset.herb;
+    const data = herbData[herbKey];
+    if (!data) return;
+
+    tabsWrap.querySelectorAll('.herb-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    detailBox.style.opacity = '0.3';
+    setTimeout(() => {
+      if (herbTag) herbTag.textContent = data.tag;
+      if (herbName) herbName.textContent = data.name;
+      if (herbDesc) herbDesc.textContent = data.desc;
+      detailBox.style.opacity = '1';
+    }, 150);
+  });
+})();
+
+/* =========================================================
+   4. INTERACTIVE 3-STEP SIMULATOR & 30S DRY CHALLENGE
+   ========================================================= */
+(() => {
+  const stepsCard = document.getElementById('stepsCard');
+  if (!stepsCard) return;
+
+  // Tab switching
+  const tabs = stepsCard.querySelectorAll('.step-nav-btn');
+  const panels = stepsCard.querySelectorAll('.step-panel-item');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.stepTarget;
+      tabs.forEach(t => {
+        const isSelected = t === tab;
+        t.classList.toggle('active', isSelected);
+        t.setAttribute('aria-selected', String(isSelected));
+      });
+      panels.forEach(p => {
+        p.classList.toggle('active', p.dataset.stepPanel === target);
+      });
+    });
+  });
+
+  // Step 1: Shake Bottle Animation
+  const btnShake = document.getElementById('btnShakeBottle');
+  const simBottle1 = document.getElementById('simBottle1');
+  if (btnShake && simBottle1) {
+    btnShake.addEventListener('click', () => {
+      simBottle1.classList.remove('is-shaking');
+      void simBottle1.offsetWidth; // Trigger reflow
+      simBottle1.classList.add('is-shaking');
+      btnShake.textContent = '✨ Đang lắc hòa quyện thảo mộc...';
+      btnShake.disabled = true;
+
+      setTimeout(() => {
+        simBottle1.classList.remove('is-shaking');
+        btnShake.textContent = '✅ Đã hòa quyện đều! Bấm để lắc lại';
+        btnShake.disabled = false;
+      }, 1400);
+    });
+  }
+
+  // Step 2: Spray Mist Animation
+  const btnSpray = document.getElementById('btnSprayMist');
+  const simSprayWrap = document.getElementById('simSprayWrap');
+  if (btnSpray && simSprayWrap) {
+    btnSpray.addEventListener('click', () => {
+      simSprayWrap.classList.remove('is-spraying');
+      void simSprayWrap.offsetWidth;
+      simSprayWrap.classList.add('is-spraying');
+      btnSpray.textContent = '💨 Đang phun sương Nano...';
+      btnSpray.disabled = true;
+
+      setTimeout(() => {
+        simSprayWrap.classList.remove('is-spraying');
+        btnSpray.textContent = '✅ Đã phủ sương siêu mịn! Bấm xịt lại';
+        btnSpray.disabled = false;
+      }, 1600);
+    });
+  }
+
+  // Step 3: 30s Dry Test Challenge Stopwatch
+  const btnStartDry = document.getElementById('btnStartDryTest');
+  const dryBar = document.getElementById('dryTimerBar');
+  const drySeconds = document.getElementById('drySeconds');
+  const dryLabel = document.getElementById('dryLabel');
+  const drySuccess = document.getElementById('drySuccessAlert');
+  let dryTimerInterval = null;
+
+  if (btnStartDry && dryBar && drySeconds) {
+    const totalCircumference = 2 * Math.PI * 52; // ~326.7
+    dryBar.style.strokeDasharray = `${totalCircumference}`;
+    dryBar.style.strokeDashoffset = `${totalCircumference}`;
+
+    btnStartDry.addEventListener('click', () => {
+      if (dryTimerInterval) clearInterval(dryTimerInterval);
+      if (drySuccess) drySuccess.style.display = 'none';
+
+      btnStartDry.disabled = true;
+      btnStartDry.textContent = '⏱️ Đang đếm giây khô thoáng...';
+      if (dryLabel) dryLabel.textContent = 'Đang khô ráo';
+
+      let elapsedSec = 0;
+      const targetSec = 30;
+
+      dryTimerInterval = setInterval(() => {
+        elapsedSec += 1;
+        const progress = Math.min(1, elapsedSec / targetSec);
+        const offset = totalCircumference - (totalCircumference * progress);
+        dryBar.style.strokeDashoffset = `${offset}`;
+
+        const pad = n => String(n).padStart(2, '0');
+        drySeconds.textContent = `00:${pad(elapsedSec)}`;
+
+        if (elapsedSec >= targetSec) {
+          clearInterval(dryTimerInterval);
+          dryTimerInterval = null;
+          if (dryLabel) dryLabel.textContent = 'KHÔ 100%';
+          if (drySuccess) {
+            drySuccess.style.display = 'block';
+            drySuccess.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          btnStartDry.disabled = false;
+          btnStartDry.textContent = '↻ Thử thách lại 30 giây';
+        }
+      }, 1000);
+    });
+  }
+})();
