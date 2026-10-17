@@ -40,7 +40,7 @@ $sheet_url = lx_get_field('lx_sheet_endpoint', 'option', 'https://script.google.
         <?php if (!empty($order_img)) : ?>
           <img src="<?php echo $order_img; ?>" alt="Xịt Khử Mùi Gừng Cam Mây Mây" loading="lazy">
         <?php else : ?>
-          <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
+          <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi gừng cam Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
             <use href="#bottle-shape"/>
           </svg>
           <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>

@@ -267,6 +267,14 @@ function lx_register_acf_field_group() {
                 'type' => 'tab',
             ),
             array(
+                'key' => 'field_lx_ing_label',
+                'label' => __('Nhãn đầu mục (Label tag)', 'lx-landing'),
+                'name' => 'lx_ing_label',
+                'type' => 'text',
+                'default_value' => 'Xịt khử mùi gừng cam Mây Mây',
+                'placeholder' => 'Xịt khử mùi gừng cam Mây Mây',
+            ),
+            array(
                 'key' => 'field_lx_ing_1_image',
                 'label' => __('Ảnh thành phần 1: Bạc hà', 'lx-landing'),
                 'name' => 'lx_ing_1_image',

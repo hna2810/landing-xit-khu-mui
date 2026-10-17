@@ -43,9 +43,9 @@ $zones_data = array(
           ?>
             <div class="usage-slide <?php echo $idx === 0 ? 'active' : ''; ?>" data-slide="<?php echo $idx; ?>">
               <?php if (!empty($slide_img)) : ?>
-                <img class="photo" src="<?php echo $slide_img; ?>" alt="Xịt khử mùi Mây Mây – <?php echo $z['title']; ?>">
+                <img class="photo" src="<?php echo $slide_img; ?>" alt="Xịt khử mùi gừng cam Mây Mây – <?php echo $z['title']; ?>">
               <?php else : ?>
-                <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
+                <svg class="bottle-render" viewBox="0 0 160 380" aria-label="Chai xịt khử mùi gừng cam Mây Mây 30ml" style="width:58%; max-height:88%; z-index:2; position:relative;">
                   <use href="#bottle-shape"/>
                 </svg>
                 <svg class="botanical b1" viewBox="0 0 84 84" style="z-index:1;"><use href="#b-mint"/></svg>

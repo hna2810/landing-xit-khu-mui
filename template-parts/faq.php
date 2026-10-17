@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 $faqs = lx_get_field('lx_faq_items', 'option', array());
 $default_faqs = array(
     array(
-        'question' => 'Xịt khử mùi Mây Mây có dùng được cho mẹ sau sinh không?',
+        'question' => 'Xịt khử mùi gừng cam Mây Mây có dùng được cho mẹ sau sinh không?',
         'answer'   => 'Dùng được. Thành phần hoàn toàn từ thảo mộc thiên nhiên (bạc hà, trầu không, gừng, cam), lành tính, an toàn cho mẹ sau sinh và đang cho con bú.',
     ),
     array(

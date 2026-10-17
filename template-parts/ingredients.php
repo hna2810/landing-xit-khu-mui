@@ -25,7 +25,13 @@ $ing4_role = lx_get_field('lx_ing_4_role', 'option', 'Tươi tắn, thơm thanh'
 <section class="section ingredients-sec panel" id="thanh-phan">
   <div class="container">
     <div class="text-center">
-      <p class="label center reveal">Xịt khử mùi Mây Mây</p>
+      <?php
+      $ing_label = lx_get_field('lx_ing_label', 'option', 'Xịt khử mùi gừng cam Mây Mây');
+      if (empty($ing_label)) {
+          $ing_label = 'Xịt khử mùi gừng cam Mây Mây';
+      }
+      ?>
+      <p class="label center reveal"><?php echo $ing_label; ?></p>
       <h2 class="h2 display reveal d1">Chăm sóc mùi cơ thể,<br><em>thêm tự tin mỗi ngày.</em></h2>
       <p class="lead reveal d2">Mây Mây mang đến giải pháp chăm sóc mùi cơ thể với thành phần thảo mộc thuần chay bí truyền từ bạc hà, trầu không, gừng và cam.</p>
     </div>
