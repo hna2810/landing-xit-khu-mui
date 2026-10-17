@@ -161,6 +161,13 @@ function lx_register_acf_field_group() {
                 'type' => 'text',
                 'default_value' => 'Flash sale −45%',
             ),
+            array(
+                'key' => 'field_lx_hero_btn_text',
+                'label' => __('Chữ trên nút đặt hàng Hero', 'lx-landing'),
+                'name' => 'lx_hero_btn_text',
+                'type' => 'text',
+                'default_value' => 'FREESHIP - Mua Ngay!',
+            ),
 
             // ── TAB 2: NỖI LO THẦM KÍN ───────────────────────────────
             array(

@@ -110,24 +110,116 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
   max-width: 100%;
   box-sizing: border-box;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
-.btn:hover { background: linear-gradient(135deg, #ff8e3d 0%, #d85c18 100%); transform: translateY(-2px); box-shadow: 0 14px 28px -6px rgba(230,104,29,.55); color: #ffffff; }
-.btn:active { transform: translateY(1px); }
-.btn svg { width: 18px; height: 18px; transition: transform .2s ease; flex-shrink: 0; }
-.btn:hover svg { transform: translateX(3px); }
-.btn-block { width: 100%; }
-.btn-lg { padding: 18px 34px; font-size: 17px; }
-.btn-lg svg:first-child { width: 20px; height: 20px; }
-.btn:hover svg:first-child:not(:last-child) { transform: none; }
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 15%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 85%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: btnShimmerSweep 3s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.btn:hover {
+  background: linear-gradient(135deg, #ff8e3d 0%, #d85c18 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -6px rgba(230,104,29,.65);
+  color: #ffffff;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+.btn:hover svg:last-child {
+  transform: translateX(4px);
+}
+.btn-block {
+  width: 100%;
+}
+.btn-lg {
+  padding: 18px 36px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 12px 28px -6px rgba(230,104,29,.55);
+}
+.btn-lg svg:first-child {
+  width: 22px;
+  height: 22px;
+}
+.btn-lg svg:last-child {
+  width: 20px;
+  height: 20px;
+}
+.btn:hover svg:first-child:not(:last-child) {
+  transform: none;
+}
 @media (max-width: 480px) {
   .btn-lg {
     width: 100%;
     padding: 16px 14px;
-    font-size: 15px;
+    font-size: 15.5px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
     gap: 8px;
     white-space: normal;
     text-align: center;
   }
+  .btn-lg svg:first-child { width: 19px; height: 19px; }
+  .btn-lg svg:last-child { width: 17px; height: 17px; }
+}
+
+/* Animations for buttons to pop / stand out */
+@keyframes btnShimmerSweep {
+  0%, 30% { left: -130%; }
+  70%, 100% { left: 210%; }
+}
+
+@keyframes btnPulseGlow {
+  0%, 100% {
+    box-shadow: 0 10px 24px -6px rgba(230, 104, 29, 0.45);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 14px 34px -4px rgba(230, 104, 29, 0.72), 0 0 20px 3px rgba(255, 160, 89, 0.45);
+    transform: translateY(-2px);
+  }
+}
+
+.hero .btn,
+.sticky-btn-buy,
+.btn-herb,
+#submitBtn,
+.wpcf7-submit {
+  animation: btnPulseGlow 2.6s ease-in-out infinite;
+}
+
+.hero .btn:hover,
+.sticky-btn-buy:hover,
+.btn-herb:hover,
+#submitBtn:hover,
+.wpcf7-submit:hover {
+  animation-play-state: paused;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 38px -4px rgba(230, 104, 29, 0.75), 0 0 24px 4px rgba(255, 160, 89, 0.55);
 }
 .btn-ghost { background: var(--white); color: var(--ink); box-shadow: var(--shadow-card); }
 .btn-ghost:hover { background: var(--white); color: var(--ink); box-shadow: 0 14px 30px -12px rgba(120,70,30,.25); }
@@ -980,13 +1072,35 @@ h1, h2, h3 { font-weight: 600; letter-spacing: -.015em; }
   border-radius: 999px;
   padding: 0 16px;
   box-shadow: 0 6px 18px -4px rgba(230, 104, 29, 0.5);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 15px;
   line-height: 1;
   white-space: nowrap;
   transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+.sticky-btn-buy::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0) 15%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 85%,
+    transparent 100%
+  );
+  transform: skewX(-25deg);
+  animation: btnShimmerSweep 3s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: inherit;
 }
 .sticky-btn-buy:active {
   transform: scale(0.97);

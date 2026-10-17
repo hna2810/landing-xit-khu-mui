@@ -74,8 +74,14 @@ $ratio_class = 'ratio-' . sanitize_html_class(str_replace(':', '-', $hero_video_
           <span class="offer-old">Niêm yết <s><?php echo $hero_old; ?></s></span>
         </span>
       </div>
+      <?php
+      $hero_btn_text = lx_get_field('lx_hero_btn_text', 'option', 'FREESHIP - Mua Ngay!');
+      if (empty($hero_btn_text)) {
+          $hero_btn_text = 'FREESHIP - Mua Ngay!';
+      }
+      ?>
       <div class="hero-actions reveal d3">
-        <a href="#dat-hang" class="btn btn-lg"><svg class="icon"><use href="#i-truck"/></svg>Freeship toàn quốc – Mua ngay <svg class="icon"><use href="#i-arrow"/></svg></a>
+        <a href="#dat-hang" class="btn btn-lg"><svg class="icon"><use href="#i-truck"/></svg><?php echo esc_html($hero_btn_text); ?> <svg class="icon"><use href="#i-arrow"/></svg></a>
       </div>
     </div>
     <div class="gallery reveal">
