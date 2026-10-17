@@ -60,7 +60,18 @@ $ratio_class = 'ratio-' . sanitize_html_class(str_replace(':', '-', $hero_video_
   <div class="container">
     <div>
       <h1 class="display reveal d1"><?php echo $hero_title; ?></h1>
-      <a class="rating-line reveal d1" id="heroRating" href="#danh-gia" hidden></a>
+      <?php
+      $rev_total_display = lx_get_field('lx_review_total_display', 'option', '1.680') ?: '1.680';
+      $rev_score_display = lx_get_field('lx_review_rating_score', 'option', '4.9') ?: '4.9';
+      $rev_score_vi      = str_replace('.', ',', $rev_score_display);
+      ?>
+      <a class="rating-line reveal d1" id="heroRating" href="#danh-gia">
+        <span class="stars" role="img" aria-label="<?php echo $rev_score_display; ?> trên 5 sao">
+          <span class="stars-base"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></span>
+          <span class="stars-fill" style="width: 98%;"><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg></span>
+        </span>
+        <span><b><?php echo $rev_score_vi; ?>/5</b> · <?php echo $rev_total_display; ?> đánh giá</span>
+      </a>
       <p class="lead reveal d1"><?php echo $hero_lead; ?></p>
       <ul class="hero-points reveal d2">
         <li><svg class="icon"><use href="#i-timer"/></svg>Khô thoáng 30 giây</li>
@@ -81,11 +92,11 @@ $ratio_class = 'ratio-' . sanitize_html_class(str_replace(':', '-', $hero_video_
       }
       ?>
       <div class="hero-actions reveal d3">
-        <a href="#dat-hang" class="btn btn-lg"><svg class="icon"><use href="#i-truck"/></svg><?php echo esc_html($hero_btn_text); ?> <svg class="icon"><use href="#i-arrow"/></svg></a>
+        <a href="#dat-hang" class="btn btn-lg"><svg class="icon"><use href="#i-truck"/></svg><?php echo $hero_btn_text; ?> <svg class="icon"><use href="#i-arrow"/></svg></a>
       </div>
     </div>
     <div class="gallery reveal">
-      <div class="packshot <?php echo $has_video ? 'packshot-video ' . esc_attr($ratio_class) : ''; ?>" data-visual="hero" data-media="<?php echo $has_video ? 'video' : 'image'; ?>">
+      <div class="packshot <?php echo $has_video ? 'packshot-video ' . $ratio_class : ''; ?>" data-visual="hero" data-media="<?php echo $has_video ? 'video' : 'image'; ?>">
         <?php if ($has_video) : ?>
           <?php if (!empty($yt_id)) : ?>
             <div class="hero-video-wrap">

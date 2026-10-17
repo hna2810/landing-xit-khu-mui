@@ -32,7 +32,9 @@ const CONFIG = {
     { qty: 2, name: 'Combo 2 chai 30ml', price: 89000, oldPrice: 178000, tag: 'Bán chạy nhất · Tiết kiệm 50%' },
     { qty: 3, name: 'Combo 3 chai 30ml', price: 129000, oldPrice: 267000, tag: 'Tiết kiệm 52%' }
   ],
-  timer: WP_DATA.timer || null
+  timer: WP_DATA.timer || null,
+  totalReviewsDisplay: WP_DATA.totalReviewsDisplay || '1.680',
+  ratingScore: WP_DATA.ratingScore || '4.9'
 };
 
 const fmt = n => n.toLocaleString('vi-VN') + 'đ';
@@ -306,10 +308,33 @@ document.querySelectorAll('[data-ing]').forEach(el => {
   if (!reviews.length && !CONFIG.showPlaceholders) { sec.remove(); return; }
   const summary = document.getElementById('summary'), list = document.getElementById('reviewList');
   const filtersEl = document.getElementById('filters'), more = document.getElementById('moreReviews');
-  const dist = () => [5, 4, 3, 2, 1].map(n => {
-    const c = reviews.filter(r => r.rating === n).length, pct = reviews.length ? c / reviews.length * 100 : 0;
-    return `<div class="dist-row"><span>${n} sao</span><span class="bar"><i style="width:${pct}%"></i></span><span>${c}</span></div>`;
-  }).join('');
+  const totalDisplay = String(CONFIG.totalReviewsDisplay || '1.680').trim();
+  const totalNum = parseInt(totalDisplay.replace(/\D/g, ''), 10) || 1680;
+  const avgReal = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) : 4.9;
+  const scoreVal = CONFIG.ratingScore ? (parseFloat(String(CONFIG.ratingScore).replace(',', '.')) || avgReal) : avgReal;
+  const avgTxt = (CONFIG.ratingScore ? String(CONFIG.ratingScore) : scoreVal.toFixed(1)).replace('.', ',');
+
+  const dist = () => {
+    const rawCounts = [5, 4, 3, 2, 1].map(n => {
+      const realC = reviews.filter(r => r.rating === n).length;
+      const pct = reviews.length ? (realC / reviews.length) : 0;
+      return { n, pct, realC };
+    });
+    const scaled = rawCounts.map(item => {
+      const c = Math.round(item.pct * totalNum);
+      return { ...item, count: c };
+    });
+    const sumOthers = scaled.filter(s => s.n !== 5).reduce((acc, s) => acc + s.count, 0);
+    const item5 = scaled.find(s => s.n === 5);
+    if (item5) {
+      item5.count = Math.max(0, totalNum - sumOthers);
+    }
+    return scaled.map(s => {
+      const barPct = (s.pct * 100).toFixed(0);
+      const numStr = s.count.toLocaleString('vi-VN');
+      return `<div class="dist-row"><span>${s.n} sao</span><span class="bar"><i style="width:${barPct}%"></i></span><span>${numStr}</span></div>`;
+    }).join('');
+  };
 
   if (!reviews.length) {
     markPreview();
@@ -319,21 +344,25 @@ document.querySelectorAll('[data-ing]').forEach(el => {
     return;
   }
 
-  const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
-  const avgTxt = avg.toFixed(1).replace('.', ',');
-  summary.innerHTML = `<div class="avg">${avgTxt}</div>${stars(avg)}<p class="avg-sub">Dựa trên ${reviews.length} đánh giá</p><div class="dist">${dist()}</div>`;
-  const ratingLine = `${stars(avg)}<span><b>${avgTxt}/5</b> · ${reviews.length} đánh giá</span>`;
+  summary.innerHTML = `<div class="avg">${avgTxt}</div>${stars(scoreVal)}<p class="avg-sub">Dựa trên ${totalDisplay} đánh giá</p><div class="dist">${dist()}</div>`;
+  const ratingLine = `${stars(scoreVal)}<span><b>${avgTxt}/5</b> · ${totalDisplay} đánh giá</span>`;
   const hero = document.getElementById('heroRating'), form = document.getElementById('formRating');
   if (hero) { hero.innerHTML = ratingLine; hero.hidden = false; }
   if (form) { form.innerHTML = ratingLine; form.hidden = false; }
 
+  const real4Count = reviews.filter(r => r.rating === 4).length;
+  const scaled4 = Math.round((real4Count / reviews.length) * totalNum);
+  const scaled5 = Math.max(0, totalNum - scaled4);
+  const realImgCount = reviews.filter(r => r.images.length > 0).length;
+  const scaledImg = Math.round((realImgCount / reviews.length) * totalNum);
+
   const FILTERS = [
-    ['all', 'Tất cả', () => true],
-    ['img', 'Có hình ảnh', r => r.images.length > 0],
-    ['5', '5 sao', r => r.rating === 5],
-    ['4', '4 sao', r => r.rating === 4]
-  ].map(([k, label, fn]) => ({ k, label, fn, n: reviews.filter(fn).length })).filter(f => f.k === 'all' || f.n > 0);
-  filtersEl.innerHTML = FILTERS.map((f, i) => `<button type="button" class="chip${i ? '' : ' active'}" data-k="${f.k}">${f.label} (${f.n})</button>`).join('');
+    { k: 'all', label: 'Tất cả', fn: () => true, countTxt: totalDisplay },
+    { k: 'img', label: 'Có hình ảnh', fn: r => r.images.length > 0, countTxt: scaledImg.toLocaleString('vi-VN') },
+    { k: '5', label: '5 sao', fn: r => r.rating === 5, countTxt: scaled5.toLocaleString('vi-VN') },
+    { k: '4', label: '4 sao', fn: r => r.rating === 4, countTxt: scaled4.toLocaleString('vi-VN') }
+  ].filter(f => f.k === 'all' || reviews.filter(f.fn).length > 0);
+  filtersEl.innerHTML = FILTERS.map((f, i) => `<button type="button" class="chip${i ? '' : ' active'}" data-k="${f.k}">${f.label} (${f.countTxt})</button>`).join('');
 
   const PAGE = 4;
   let active = FILTERS[0], shown = PAGE;

@@ -263,6 +263,8 @@ function lx_enqueue_scripts() {
         'orderImage'        => lx_get_image_url('lx_order_image', ''),
         'videos'            => $videos,
         'reviews'           => $reviews,
+        'totalReviewsDisplay' => lx_get_field('lx_review_total_display', 'option', '1.680') ?: '1.680',
+        'ratingScore'         => lx_get_field('lx_review_rating_score', 'option', '4.9') ?: '4.9',
         'seedingOrders'     => function_exists('lx_get_seeding_orders') ? lx_get_seeding_orders() : array(),
         'feedbackImages'    => array_values($feedback_urls),
         'feedbackImages34'  => array_values($feedback_urls_34),
