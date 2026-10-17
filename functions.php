@@ -58,7 +58,7 @@ add_action('init', function() {
         if (class_exists('\LiteSpeed\Purge')) {
             \LiteSpeed\Purge::purge_all();
         }
-        wp_die('Purged LiteSpeed Cache Successfully');
+        wp_die('Purged LiteSpeed Cache Successfully', 'Success', array('response' => 200));
     }
 });
 
